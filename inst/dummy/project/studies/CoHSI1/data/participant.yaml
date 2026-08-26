@@ -1,0 +1,5 @@
+contact_name: Koen Stam
+contact_email: k.a.stam@lumc.nl
+filetype: .csv
+path: !expr '"data/CoHSI1/CoHSI1_studyinfo.csv" |> (\(x) if (endsWith(here::here(), "TESTground/project")) here::here("..", x) else system.file(file.path("dummy", x), package = "beFAIR"))()'
+

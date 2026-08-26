@@ -1,0 +1,152 @@
+version: 2.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2026-04-21
+updated_at: 2026-05-12
+name: table_dependency
+description: |
+  Internal registry table tracking all dependencies in the FAIRground.
+  Three dependency types are recorded:
+  - "datasource": an ETL script reads a file registered in table_datasource.
+  - "script": an ETL script implicitly depends on another ETL script (e.g.
+    id_mapping.R when the codebook contains a source_id variable).
+  - "analysis_input": an analysis project explicitly depends on a specific
+    database table produced by another pillar, as declared in the analysis
+    meta.yaml dependencies field.
+  For datasource and script rows, script_id is populated and project_id /
+  codebook_name / resolved_script_id are NULL. For analysis_input rows,
+  project_id and codebook_name are populated and script_id / external_hash
+  are NULL. This table is maintained automatically and is not intended to be
+  populated manually.
+variables:
+  dependency_id:
+    description: |
+      Primary key. For dependency_type "datasource" or "script":
+      MD5 of paste(script_id, dependency_type, external_id, sep="||"). For
+      dependency_type "analysis_input": MD5 of paste(project_id, codebook_name,
+      external_id, sep="||").
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "A dependency id is required"
+
+  script_id:
+    description: The dependent ETL script, identified by its path relative to
+      the FAIRground folder. Foreign key to table_script.script_id.
+      Populated for dependency_type "datasource" and "script"; NULL for
+      "analysis_input".
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  project_id:
+    description: The dependent analysis project. Foreign key to
+      table_project.project_id. Populated for dependency_type "analysis_input";
+      NULL for "datasource" and "script".
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  dependency_type:
+    description: Type of dependency. "datasource" when an ETL script reads a
+      file registered in table_datasource; "script" when an ETL script implicitly
+      depends on another ETL script (e.g. id_mapping.R); "analysis_input" when an
+      analysis project explicitly depends on a specific database table produced by
+      another pillar.
+    units: ~
+    type: character
+    type_sql: VARCHAR(50)
+    categories: datasource;script;analysis_input
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  external_id:
+    description: |
+      The target of this dependency. For "datasource": the datasource_id from
+      table_datasource. For "script": the script_id from table_script that this
+      script depends on. For "analysis_input": the project_id from table_project
+      that supplies the data (the external pillar).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  external_hash:
+    description: |
+      Snapshot of the dependency hash at the time this row was last written.
+      For "datasource": table_datasource.file_hash; for "script":
+      table_script.script_hash. Used to detect whether the dependency has
+      changed since the script last ran. NULL for "analysis_input" (staleness
+      is tracked via resolved_script_id and queued_for_update instead).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  codebook_name:
+    description: The name of the database table (codebook) that the analysis
+      depends on, as declared in meta.yaml (e.g. "participant", "cytofpanel").
+      Populated for dependency_type "analysis_input"; NULL for other types.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  resolved_script_id:
+    description: The script_id in table_script that writes to codebook_name for
+      the given external_id (external pillar). Resolved automatically by looking
+      up the ETL script at <pillar>/<project_name>/scripts/<codebook_name>.R.
+      NULL when the script has not yet been registered in table_script, or for
+      dependency_type "datasource" and "script".
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  created_at:
+    description: ISO 8601 date (YYYY-MM-DD) when this dependency row was first
+      inserted into table_dependency.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  updated_at:
+    description: ISO 8601 date (YYYY-MM-DD) of the last update to this
+      dependency row (e.g. when external_hash or resolved_script_id was refreshed).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []

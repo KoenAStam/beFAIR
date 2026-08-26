@@ -1,0 +1,51 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: analysis_elisa
+description: |
+  Extension of the analysis table for ELISA analyses. Contains ELISA-specific metadata such
+  as the target antigen, antibody isotype, and curve-fitting information. Can be linked to the
+  main analysis table using analysis_id.
+variables:
+  analysis_id:
+    description: ID given to the analysis
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  antigen:
+    description: Specific antigen measured in the assay
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  isotype:
+    description: Measured class or subclass of antibody
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  fit_information:
+    description: Information on the curve-fitting model used for ELISA data analysis. Typically includes parameters for standard curve generation, such as the Four Parameter Logistic (4PL) model (y = d + (a - d) / (1 + (x / c)^b)) or alternative fitting methods. May also include blank-subtracted values and other relevant transformation details.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []

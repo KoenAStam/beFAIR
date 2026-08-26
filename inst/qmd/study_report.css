@@ -1,0 +1,5 @@
+/* Align all gt tables to the left */
+table.gt_table {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}

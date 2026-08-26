@@ -1,0 +1,72 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: elisa_absorbance
+description: |
+  Raw ELISA experiment data. Contains per-plate absorbance measurements (tests, blanks, standard
+  curves) with dilution factors and optional background correction values. Test samples are linked
+  to participant timepoints via event_id. Linked to the experiment table via experiment_id.
+variables:
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  plate_id:
+    description: unique plate identifier within the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+        label: "plate ID is required"
+
+  well_id:
+    description: unique well identifier within the plate. combination of the row and column e.g. A1, B6, D12 etc..
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  absorbance_wavelength:
+    description: wavelength of given absorbance value, e.g. 450, 650
+    units: ~
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  absorbance_value:
+    description: absorbance value, or OD (optical density) that reflects the concentration of target analyte
+    units: OD (optical density; dimensionless)
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

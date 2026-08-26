@@ -1,0 +1,23 @@
+---
+title: "Exploring and joining data tables"
+author: "K.A. Stam"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Exploring and joining data tables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r setup, warning=FALSE, error=FALSE, message=FALSE}
+library(beFAIR)
+```
+
+## Overview
+
+*Coming soon.*

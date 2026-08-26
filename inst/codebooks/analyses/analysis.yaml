@@ -1,0 +1,159 @@
+version: 4.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: analysis
+description: |
+  Master table of all analyses performed. Each analysis has a unique identifier, a name, and
+  a type (e.g., Array, ELISA, OMIQ, SOM). It is linked to one or more studies (source of samples)
+  and experiments (laboratory procedures), or even other Analyses. Other tables store measurement
+  data and reference this table via analysis_id so each measurement can be linked back to its analysis metadata.
+variables:
+  analysis_id:
+    description: ID given to the analysis, it consists out 'A' and 4 character code (e.g A0001)
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+        - rows_distinct:
+            label: "Analysis IDs are unique"
+
+  name:
+    description: Readable name given to the analysis
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  type:
+    description: What type of analysis was performed
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: Array; ELISA; Glycoprofiling; Luminex; OMIQ; SOM
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis type is required"
+        - col_vals_in_set:
+            set:
+              - Array
+              - ELISA
+              - Glycoprofiling
+              - Luminex
+              - OMIQ
+              - SOM
+              - Custom
+
+  study_ids:
+    description: Semicolon-separated list of study IDs whose samples were used in this analysis (e.g., 'CHSI1;CHSI2').
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Study ID is required"
+
+  experiment_ids:
+    description: Semicolon-separated list of experiment IDs that were processed in this analysis (e.g., 'Ecf9a63;E50b04a').
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  analysis_ids:
+    description: Semicolon-separated list of analyis IDs that were processed in this analysis (e.g., 'A1b6b7f;A27a9ca').
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  table_dependecies:
+    description: Is this analysis performed with data from the beFAIR
+      database? In that case list the table with id's to register dependecies.
+      e.g. participant[CHSI1];cytofbarcodingscheme[Ecf9a63,E50b04a]
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  publication_pmid:
+    description: PubMed ID (PMID) for the publication describing this analysis.
+      If the analysis is not yet published, this field can be marked as 'Not published yet'.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  description:
+    description: Description of the analysis (max 1000 characters).
+    units: ~
+    type: character
+    type_sql: VARCHAR(2000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  project_location:
+    description: Absolute path to the external R project directory that produces output CSVs for beFAIR (placed under data/tobeFAIR/).
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  source_ready:
+    description: (!in development!)  Whether this project has a `main.R` and can be sourced by `databaseUpdate`. By using this parameter the downstream analysis is automatically
+      updated if any dependecies also changed.
+    type: character
+    type_sql: VARCHAR(255)
+    categories: yes;no
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  git_repo:
+    description: Optional URL or path to the git repository of the external R project.
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  owner:
+    description: Optional name of the person responsible for this analysis.
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+          - col_is_character: []
+

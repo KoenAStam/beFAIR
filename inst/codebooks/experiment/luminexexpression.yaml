@@ -1,0 +1,232 @@
+version: 4.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: luminexexpression
+description: |
+  Raw data from Luminex experiments. Each row represents the fluorescence intensity (MFI) of a
+  specific antibody isotype measured against a given antigen for a participant event (sample).
+  Includes metadata on antigen source, sample type, dilution, and QC flags. Linked to the
+  experiment table via experiment_id and to events via event_id.
+variables:
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: ID given to the study or trial for this source id; foreign key to study.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Timepoint in days relative to start of the study.
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: ID given to the participant; foreign key. Automatically filled in.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Identifier for the event (sample). Consist of participant id and timepoint in days. Automatically filled in.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  plate_number:
+    description: The number of the plate
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  isotype:
+    description: Measured class or subclass of antibody
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~ # used to be IgG;IgG1;IgG2;IgG3;IgG4,IgA,IgE
+    labels: ~
+    validations:
+      - col_is_character: []
+      # - col_vals_in_set:
+      #     set:
+      #       - IgG
+      #       - IgG1
+      #       - IgG2
+      #       - IgG3
+      #       - IgG4
+      #       - IgA
+      #       - IgE
+      #       - IgM
+
+  antigen:
+    description: Specific antigen measured in the assay
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  source_lifestage:
+    description: Life stage of the source (antigen)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~ # used to be cercariae;adult;larva;egg
+    labels: ~
+    validations:
+      - col_is_character: []
+      # - col_vals_in_set:
+      #     set:
+      #     - cercariae
+      #     - adult
+      #     - larva
+      #     - egg
+
+  sample_role:
+    description: specifies the purpose of the sample in the assay. Like, test, control or blank.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: TS;NC;PC;BL
+    labels: TS=test;NC=negative control;PC=positive control;BL=blank
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - TS # test
+            - NC # negative control
+            - PC # positive control
+            - BL # blank
+
+  dilution:
+    description: Dilution factor of the sample (as a character string, e.g., '1/100').
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  mfi:
+    description: Mean Fluorescence Intensity measured
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  red_flags:
+    description: Flags for potential issues with the data # TODO extend set
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  # possible red flags:
+  # low values
+  # blanks to high (contamination)
+  # low count
+  # very low count
+
+
+  # batch_correction: # part of analyses
+  #   description: Indicates if batch correction was applied
+  #   units: ~
+  #   type: integer
+  #   categories: 0;1
+  #   labels: 0=No;1=Yes
+  #   validations:
+  #       - col_vals_in_set:
+  #           set:
+  #             - 0
+  #             - 1
+  #             - NA
+  #
+  # batch_correction_spec: # part of analyses
+  #   description: Details about batch correction applied
+  #   units: ~
+  #   type: character
+  #   categories: ~
+  #   labels: ~
+  #   validations:
+  #     - col_is_character: []
+  # seropositive: # is outcome?
+  #   description: Indicates if seropositivity is reached
+  #   units: ~
+  #   type: integer
+  #   categories: 0;1
+  #   labels: 0=No;1=Yes
+  #   validations:
+  #       - col_vals_in_set:
+  #           set:
+  #             - 0
+  #             - 1
+  #             - NA
+  #
+  # seropositive_cutoff:# on experiment level?
+  #   description: Threshold for seropositivity
+  #   units: ~
+  #   type: character
+  #   categories: ~
+  #   labels: ~
+  #   validations:
+  #     - col_is_character: []

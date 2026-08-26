@@ -1,0 +1,189 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: cytofpanel
+description: |
+  Table storing the panel definition for a CyTOF mass cytometry experiment.
+  Each row describes one channel/antibody target in the panel, linked to the experiment via
+  experiment_id. Includes channel IDs, metal mass, element, target IDs, clone, vendor,
+  catalog number, RRID, staining type, and dilution.
+variables:
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  channel_id:
+    description: A unique identifier for the channel. It serves as the definitive reference to be used.
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - rows_distinct:
+        label: "channel id is unique"
+
+  channel_id_fcs:
+    description: The channel `name` as it appears in the .fcs file. This name is used for cross-referencing or mapping data from the .fcs.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  channel_mass:
+    description: Atomic weight or mass number of metal
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  channel_element:
+    description: Element name derived from periodic table
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~ # We could add all possible elements in here
+
+  target_id:
+    description: The primary identifier of the protein of interest. It serves as the definitive reference to be used.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  target_id_fcs:
+    description: This identifier corresponds to the `desc` parameter in the .fcs file. It serves as a reference for cross-checking or mapping data from the .fcs file.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  target_name:
+    description: Harmonized name/label of target protein, either `CD`, `HGNC` or custom name. See CyStore package for more info
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  clone:
+    description: Clone of given antibody target
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  vendor:
+    description: By whom the antibody was produced or sold
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  catalog_number:
+    description: Catalog number
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  RRID:
+    description: Antibody identifier according to the resource identification portal (https://rrid.site/)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  staining_type:
+    description: Indicates whether the antibody staining is intracellular or extracellular.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: intracellular; extracellular
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - intracellular
+            - extracellular
+            - NA
+
+  self_conjugated:
+    description: Whether the target was self conjugated or not
+    units: ~
+    type: integer
+    type_sql: INT
+    categories: 0;1
+    labels: 0=No;1=Yes
+    validations:
+        - col_vals_in_set:
+            set:
+              - 0
+              - 1
+              - NA
+
+  dilution:
+    description: dilution factor 1/x of antibody to volume
+    units: dilution factor
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  notes:
+    description: Any additional comments or notes about the data, such as mismatches between the identifiers used in the primary dataset and the .fcs file, and their corresponding target names.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

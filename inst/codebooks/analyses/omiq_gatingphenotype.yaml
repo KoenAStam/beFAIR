@@ -1,0 +1,181 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: omiq_gatingphenotype
+description: |
+  Table containing gating metadata for OMIQ flow cytometry analyses. Each row represents a
+  defined cell subset derived from a gating strategy. Includes the dataset, filter applied,
+  harmonized subset name, lineage, and up to 10 sequential gates specifying marker expression
+  levels. Each row can be linked back to the main analysis table via analysis_id.
+variables:
+  analysis_id:
+    description: Analysis ID; foreign key
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  gating_id:
+    description: Unique identifier for this gating definition, composed of dataset name and filter.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  filter:
+    description: Name of the filter/gate applied in OMIQ to derive this cell subset.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  subset_name:
+    description: Subset (harmonized given name to the subset)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  lineage_name:
+    description: Lineage name
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: Unc. T Cells; CD 4+ T Cells; CD 8+ T Cells; Myeloids; NK; ILCs; B Cells
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - Unc. T Cells
+            - CD 4+ T Cells
+            - CD 8+ T Cells
+            - Myeloids
+            - NK
+            - ILCs
+            - B Cells
+            - NA
+
+  gate_1:
+    description: Gate 1 in format HLA-DR_+_OR_CD7_-; CD3_+; CD16_-_AND_CD56_++. Expression level options are ++, +, dim, -, --. Logical operators AND, OR, XOR.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_2:
+    description: Gate 2. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_3:
+    description: Gate 3. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_4:
+    description: Gate 4. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_5:
+    description: Gate 5. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_6:
+    description: Gate 6. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_7:
+    description: Gate 7. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_8:
+    description: Gate 8. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_9:
+    description: Gate 9. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gate_10:
+    description: Gate 10. Same format as gate 1.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

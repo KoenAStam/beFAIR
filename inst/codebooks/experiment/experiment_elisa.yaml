@@ -1,0 +1,75 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: experiment_elisa
+description: |
+  Extension of the experiment table for ELISA experiments. Contains ELISA-specific metadata
+  such as the target analyte, kit, assay type, and measurement wavelengths.
+  Each row can be linked back to the main experiment table via experiment_id.
+variables:
+  target:
+    description: Target analyte of interest e.g. IgG, IgM leptin, HMGB-1, TNFa. Try to use HGNC or Uniprot for naming conventions
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  kit:
+    description: Kit manufacturer and catalogus number, if applicable
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  assay_type:
+    description: What type of ELISA is performed. Direct, sandwich, competitive, or indirect.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: direct, sandwich, competitive, indirect
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+          set:
+            - direct
+            - sandwich
+            - competitive
+            - indirect
+            - NA
+
+  concentration_units:
+    description: Unit of back-calculated concentration e.g. ng/ml or AU (arbitrary units)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  target_wavelength:
+    description: Which wavelength is measured as the target, e.g. 405, 450, 492, 650
+    units: ~
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  background_wavelength:
+    description: Which wavelength is measured as background (if any), e.g. 405, 450, 492, 650
+    units: ~
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []

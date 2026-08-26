@@ -1,0 +1,51 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: analysis_omiq
+description: |
+  Extension of the analysis table for OMIQ flow cytometry analyses. Contains OMIQ-specific
+  metadata such as dataset name, Omiq account, and FCS file location. Can be linked to the
+  main analysis table using analysis_id.
+variables:
+  analysis_id:
+    description: ID given to the analysis
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  dataset_name:
+    description: Omiq dataset name
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  omiq_account:
+    description: Omiq account
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  fcs_file_location:
+    description: Location of the folder where the fcs files are stored # eventually we would expect this in the experiment info.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []

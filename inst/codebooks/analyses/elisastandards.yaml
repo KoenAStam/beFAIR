@@ -1,0 +1,77 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: elisastandards
+description: |
+  Table storing the standard curve fit metadata for each plate in an ELISA analysis.
+  Each row corresponds to one plate within one experiment and one analysis, recording which
+  wells were used for the standard curve fit and the residual standard error (sigma_fit).
+variables:
+  analysis_id:
+    description: analysis ID; foreign key
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  plate_id:
+    description: unique plate identifier within the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+        label: "plate ID is required"
+
+  wells_used:
+    description: character string of which well_id's are used for the standard curve fit. separated by semi-colon e.g. A11;B11;C11;A12;B12;C12;D12;E12
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+        label: "plate ID is required"
+
+  sigma_fit:
+    description: residual standard error of the signal fit
+    units: AU/mL
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

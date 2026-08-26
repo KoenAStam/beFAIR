@@ -1,0 +1,228 @@
+---
+title: "Start here: Harmonizing data with beFAIR"
+author: "K.A. Stam"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Start here: Harmonizing data with beFAIR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What is beFAIR?
+
+Running a multi-study research platform means dealing with data in different
+formats, naming conventions, and structures across studies. beFAIR solves
+this by providing a shared, codebook-driven framework for collecting and
+**harmonizing** clinical research data into a single SQL database — following
+the [FAIR data principles](https://www.go-fair.org/fair-principles/).
+
+FAIR stands for:
+
+- **F**indable — data and metadata are easy to discover
+- **A**ccessible — data can be retrieved with standard protocols
+- **I**nteroperable — data uses shared vocabularies and formats
+- **R**eusable — data is well-described and can be reused across studies
+
+beFAIR achieves this by combining a **codebook-driven schema** with
+auto-generated ETL scripts. Every table in the database is defined by a
+codebook (a YAML file specifying variable names, types, and validation rules).
+Scripts are drafted automatically, leaving you to fill in only the
+study-specific data mapping logic.
+
+
+<img src="images/infographic.svg" style="width: 100%;" alt="beFAIR infographic"/>
+
+### The three data pillars
+
+A FAIRground is organized around three data pillars:
+
+```{r pillars, echo=FALSE}
+htmltools::tags$div(
+  style = "display: flex; gap: 2rem; margin: 1.5rem 0; text-align: center;",
+  htmltools::tags$div(
+    style = "flex: 1;",
+    htmltools::tags$img(src = "images/icon_study.svg", width = "80px",
+                        style = "margin-bottom: 0.5rem;"),
+    htmltools::tags$h4(htmltools::tags$a("Study", href = "adding_a_study.html"),
+                       style = "margin: 0.4rem 0;"),
+    htmltools::tags$p(htmltools::tags$code("studies/"), style = "margin: 0;"),
+    htmltools::tags$p("Clinical trial metadata — participants, study arms, scheduled events, and the ID mapping that links source identifiers to anonymised participant IDs.")
+  ),
+  htmltools::tags$div(
+    style = "flex: 1;",
+    htmltools::tags$img(src = "images/icon_experiment.svg", width = "80px",
+                        style = "margin-bottom: 0.5rem;"),
+    htmltools::tags$h4(htmltools::tags$a("Experiment", href = "adding_an_experiment.html"),
+                       style = "margin: 0.4rem 0;"),
+    htmltools::tags$p(htmltools::tags$code("experiments/"), style = "margin: 0;"),
+    htmltools::tags$p("Laboratory measurements on participant samples — e.g. CyTOF, ELISA, Olink, and flow cytometry.")
+  ),
+  htmltools::tags$div(
+    style = "flex: 1;",
+    htmltools::tags$img(src = "images/icon_analysis.svg", width = "80px",
+                        style = "margin-bottom: 0.5rem;"),
+    htmltools::tags$h4(htmltools::tags$a("Analysis", href = "adding_an_analysis.html"),
+                       style = "margin: 0.4rem 0;"),
+    htmltools::tags$p(htmltools::tags$code("analyses/"), style = "margin: 0;"),
+    htmltools::tags$p("Processed or derived results computed from study and experimental data.")
+  )
+)
+```
+
+Each pillar lives in its own subdirectory and contains one or more **ETL
+scripts** alongside a `meta.yaml` describing the dataset and a `data/` folder
+pointing to raw source files.
+
+### The codebook system
+
+Every database table is defined by a **codebook** — a YAML file that describes
+each variable: its name, data type, allowed categories, and validation rules.
+Codebooks are the shared vocabulary that makes data comparable across studies.
+
+Here is an example for the `age` variable in the `participant` codebook:
+
+```yaml
+age:
+  description: Age of subject at enrollment; in years. Usually an integer, but
+    decimals are allowed for newborns (e.g. 0.2).
+  units: years
+  type: numeric
+  type_sql: DECIMAL
+  categories: ~
+  labels: ~
+  validations:
+    - col_is_numeric: []
+    - col_vals_between:
+        left: 0
+        right: 120
+        na_pass: true
+        label: "Age in years should fall within specified range"
+```
+
+beFAIR ships with built-in codebooks covering all standard study, experiment,
+and analysis tables. For assays or schemas unique to your project, you can also
+place custom YAML codebooks in the `codebooks/` folder inside your beFAIR
+project directory — they are treated identically to built-in ones. See the
+[Codebook configuration guide](codebook_configuration.html) to learn how to read,
+write, and add custom codebooks, and the [Codebook reference](codebooks_reference.html)
+for the full list of available built-in codebooks and their variables.
+
+---
+
+## How beFAIR works
+
+Depending on your role, beFAIR will mean something different to you.
+
+### I want to use data from the database
+
+The database is already populated and you want to query or retrieve data.
+Connect to the database using `FAIRgroundConnect()` with your institutional DSN,
+then use standard `DBI` calls to read tables.
+
+```r
+FAIRgroundConnect("LUCID_FAIRPOINT")
+con <- FAIRgroundConnection()
+
+DBI::dbReadTable(con, "participant")
+```
+
+To pull all tables related to a specific study, experiment, or analysis ID —
+following relationships across all three pillars — use `collectTablesById()`:
+
+```r
+collectTablesById(con, id = "CHSI1")   # returns a named list of all linked tables
+```
+
+See the [Database smoke test](database_smoke_test.html) for a worked example of
+connecting and inspecting the available tables, and
+[Exploring and joining data tables](exploring_and_joining_data_tables.html) for
+a guide to the available wrapper functions.
+
+### I want to add data by writing ETL scripts
+
+A FAIRground directory already exists and you need to contribute data
+for a new study, experiment, or analysis.
+
+<!-- Also describe how to add a specific script such as participant_basemalvac with the draftScript function. -->
+
+```r
+FAIRgroundConnect("LUCID_FAIRPOINT")
+
+addStudy("MyStudy", study_id = "MYST1")       # scaffolds scripts under studies/
+addExperiment("MyStudy_CyTOF_exvivo",
+              experiment_type = "CyTOF")       # scaffolds scripts under experiments/
+addAnalysis("MyStudy_CyTOF_clustering")        # scaffolds scripts under analyses/
+```
+
+Each function drafts the required ETL scripts for you. Your job is to fill in
+the data-mapping logic. See [Adding a study](adding_a_study.html),
+[Adding an experiment](adding_an_experiment.html), and
+[Adding an analysis](adding_an_analysis.html) for step-by-step walkthroughs.
+
+### I am a developer or database maintainer
+
+You are responsible for keeping the database up to date — running ETL scripts,
+managing codebook versions, and onboarding new contributors. If you are setting
+up beFAIR for the first time, start with [Starting a project](starting_a_project.html).
+
+<!-- Make a clear distinction between starting a project and maintaining an existing project. In two different code blocks.  -->
+
+```r
+FAIRgroundConnect("LUCID_FAIRPOINT")
+
+# Re-run all new or changed scripts and reload the database:
+databaseUpdate()
+
+# First-time setup of a new database:
+startProject(dir = "/path/to/my/project")
+databaseInitialize()
+```
+
+`databaseUpdate()` is the main orchestrator — it syncs codebook definitions,
+detects new or changed scripts, runs each one, validates the output, and loads
+it into the database. See the
+[Database smoke test](database_smoke_test.html) for setup and maintenance
+guides, and [Developer internals](developer_internals.html) for a deep dive
+into `databaseUpdate()` and the registry tables.
+
+---
+
+## Where to go next
+
+### Setting up
+
+| Guide | What you will learn |
+|---|---|
+| [Starting a project](starting_a_project.html) | Initialize the project directory, connect to a database, and run `databaseInitialize()` |
+| [Database smoke test](database_smoke_test.html) | Connect via DSN or SQLite, initialize, and verify the registry tables |
+| [Developer internals](developer_internals.html) | Understand the `table_codebook` and `table_script` registry tables and every function called by `databaseUpdate()` |
+
+### Using data
+
+| Guide | What you will learn |
+|---|---|
+| [Exploring and joining data tables](exploring_and_joining_data_tables.html) | Load, filter, and join tables across the three pillars using beFAIR's wrapper functions |
+
+### Populating data
+
+| Guide | What you will learn |
+|---|---|
+| [Adding a study](adding_a_study.html) | Register a study with `addStudy()`, complete `meta.yaml`, and fill in the four study ETL scripts (`id_mapping`, `participant`, `studyarm`, `studydesign`) |
+| [Adding an experiment](adding_an_experiment.html) | Register an experiment with `addExperiment()` and complete the experiment-specific ETL scripts |
+| [Adding an analysis](adding_an_analysis.html) | Register an analysis with `addAnalysis()` and complete the analysis ETL scripts |
+
+<!-- Also describe how to add a specific script such as participant_basemalvac with the draftScript function. -->
+
+### Codebook reference
+| Guide | What you will learn |
+|---|---|
+| [Codebook configuration guide](codebook_configuration.html) | Understand the YAML codebook format — types, categories, validation rules, and how to add custom codebooks |
+| [Codebook reference](codebooks_reference.html) | Browse all built-in codebooks and their variables |

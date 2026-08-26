@@ -1,0 +1,275 @@
+---
+title: "Starting a project"
+output:
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Starting a project} 
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}\n"
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+# Create temporary directory
+dir <- paste0(tempdir(), "/beFAIR")
+dir.create(dir)
+knitr::opts_knit$set(
+  root.dir = dir
+)
+
+setwd(dir)
+
+```
+
+```{r setup, warning=F, error=F, message=F}
+library(basictabler)
+library(dplyr)
+library(htmltools)
+library(beFAIR)
+library(yaml)
+```
+
+<center>
+## 🚧 _Under construction_ 🚧
+</center>
+
+# Getting started
+
+## Starting a FAIR data project.
+To begin your FAIR data project, first create a new directory and navigate into it. 
+Then, use the startProject() function to initialize the project structure.
+
+```{r}
+dir <- paste0(tempdir(), "/beFAIR")
+startProject(dir = dir)
+
+list.files(dir)
+```
+This will create the necessary directory structure for your project. 
+
+## Adding a study
+
+A new study can be added by running `addStudy()`. A unique study
+name and unique study id is required and will kickstart the necessary ETL scripts 
+under `/studies/[study_name]`. If the study is recorded at clinicaltrials.gov
+(e.g. https://clinicaltrials.gov/study/NCT02237586), you can give the 
+registration code as an extra parameter to automatically retrieve relevant study information.
+
+```{r}
+addStudy(study_name = "Study1",
+         study_id = "STDY1",
+         registration_code = "NCT02237586")
+```
+
+### Study folder structure
+
+A new folder can be found in the `studies` directory, named after the study name you provided (e.g., `Study1`).
+
+In the study folder, you will find the following components:
+
+- **`meta.yaml`**: This file contains essential metadata about the study.
+- **`data/`**: A folder designated for storing the data locations.
+- **`scripts/`**: A folder with the ETL scripts related to the study.
+
+We will break down each of these components in the following sections for a clearer understanding.
+
+### Study metadata
+
+You will find the `meta.yaml` file located at `studies/[study_name]/meta.yaml`. This file contains essential metadata about the study, which you are requested to supplement with the missing information. The table below is a small snapshot of information stored in the meta.yaml file.
+
+```{r, echo=F}
+studyMeta <- yaml::read_yaml("studies/Study1/meta.yaml")
+# tbl <- BasicTable$new()
+# tbl$addData(data.frame(studyMeta)[,2:10])
+# tbl$renderTable()
+```
+
+### Data folder
+
+The data folder in each study directory is intended to organize and manage the locations of the raw data files associated with the study. This is facilitated by YAML files, where each raw data file can have its own YAML configuration file. These YAML files provide key metadata about the raw data, including its location, file type, and contact information of the data owner.
+
+This information is used to automate the extraction and transformation processes within the study's ETL pipeline. The YAML files ensure that raw data is easily located and interpreted in a structured, standardized format. 
+
+An example YAML file,  `template.yaml`, is automatically placed in the data folder of a new study. You can edit the template.yaml file or create additional YAML files for each raw data file in your study. Below is the structure of the template:
+
+```{r, echo=F}
+yaml_content <- readLines(paste0("studies/Study1/data/template.yaml"))
+cat("```yaml\n", paste(yaml_content, collapse = "\n"), "\n```\n")
+
+```
+
+Let’s create an example yaml file that points to a test participant data file. This YAML configuration will be used later as part of our example ETL process.
+
+`studies/[study_name]/data/participant.yaml`: 
+
+```{r, echo=F}
+# Define the content for the YAML file
+yamlContent <- list(
+  contact_name = "John Doe",
+  contact_email = "john.doe@example.com",
+  filetype = ".csv",
+  path = system.file("raw", "Study1_participant.csv", package = "beFAIR"),
+  sheet = NULL,
+  delim=";"
+)
+
+write_yaml(yamlContent, "studies/Study1/data/participant.yaml")
+
+cat(paste(readLines("studies/Study1/data/participant.yaml"), collapse = "\n"))
+```
+
+### ETL scripts
+
+In the scripts folder, the ETL (Extract, Transform, Load) scripts are provided in R format. These scripts correspond to different entities: participants, events, and samples. Each script follows the data structure defined in the codebook and is responsible for extracting, transforming, and validating the data before it can be loaded into the data warehouse.
+
+```{r}
+list.files("studies/Study1/scripts")
+
+```
+
+#### Understanding the Structure of ETL Scripts: A Walkthrough with participant.R
+Let’s take a closer look at the participant.R script to understand its structure and purpose. We will break down the script into sections to clarify its different components.
+
+- **1. Initial Setup: Defining Study Parameters and Loading Metadata**
+
+The first section of the script initializes the study by defining the study ID and loading relevant metadata from the meta.yaml file. This metadata is needed for downstream processes. No changes are needed in this section; it is pre-configured for use as-is.
+
+```{r}
+studyID <- "STDY1"
+studyFile <- paste0("studies/Study1/meta.yaml")
+studyInfo <- yaml::read_yaml(studyFile)
+studyName <- studyInfo$name
+```
+
+- **2. Loading Raw Data**
+
+In this section you load the raw data from the specified YAML files. You will need to write the code to load the raw data from the specified YAML files. Optionally, you can format or clean the raw data further at this stage.
+
+```{r}
+### 
+## Load raw data
+# 
+
+# dataInfo1 <- yaml::read_yaml(sprintf("studies/%s/data/participant.yaml", studyName))
+# rawData <-  read.delim(dataInfo1$path, sep=dataInfo1$delim)
+# 
+# ###
+# ## Study specific data preparation
+# #
+# 
+# cleanedData <- rawData %>%
+#   distinct(DonorID, .keep_all = TRUE) # Removed duplicate rows
+
+```
+
+- **3. Creating the Databook Structure for Participants**
+
+To effectively manage participant data, we will create an empty dataframe that adheres to the structure defined by the codebook. This is done using the `codebookToEntries()` function. This function generates a named list that includes the codebook and the data. The databook$data dataframe will consist of column names derived from the codebook, and the number of rows will equal the number of participants in your study. In this section, you'll need to specify the original participant IDs from the raw data.
+
+```{r}
+# originalParticipantID <- cleanedData$DonorID
+# nParticipants <- length(originalParticipantID)
+# databook <- beFAIR::codebookToEntries(cb_name="participant", nrow=nParticipants)
+
+```
+
+```{r, echo=F}
+# tbl <- BasicTable$new()
+# tbl$addData(data.frame(databook$data)[1:5,1:10])
+# tbl$renderTable()
+```
+
+- **4. Data Population **
+
+In this section, we will populate the databook$data dataframe using the raw data extracted earlier. The first few columns will be filled in automatically, including the participant IDs, which are generated in the appropriate format using a function that pseudo-anonymizes them.
+
+```{r}
+# databook$data$participant_id <- beFAIR::generateParticipantID(studyID, nParticipants)
+# databook$data$study_id <- studyID
+# databook$data$study_name <- studyName
+```
+
+The remaining entries must be completed. These entries can either reference the raw data or be populated from other sources, but they should always point back to the original source to ensure data integrity and traceability.  It’s essential to ensure that the data types match the specifications outlined in the codebook. Therefore, you may need to convert or format the data as necessary. If the values for certain columns are unknown or not applicable, you can specify them appropriately.
+
+```{r, warning=FALSE, error=FALSE, results='hide'}
+# databook$data$study_arm <- "group 1" # all participants belong to one group
+# databook$data$age_in_years <- as.numeric(cleanedData$Age_int)
+# databook$data$sex <- sapply(cleanedData$Gender, function(x) {
+#   c(
+#     "Male" = "M",
+#     "Female" = "F"
+#   )[x]
+# }) # transform sex into expected format: Male to M and Female to F
+# databook$data$ethnicity <- NA_character_
+# databook$data$length_in_cm <- as.numeric(gsub(",", ".", cleanedData$Height))
+# databook$data$weight_in_kg <- as.numeric(gsub(",", ".", cleanedData$Weight))
+# databook$data$bmi <- as.numeric(gsub(",", ".", cleanedData$BMI))
+
+```
+- **5. Participant mapping **
+
+To ensure traceability between the original participant IDs and the generated IDs, we create a mapping table. This table allows for easy reference between the original and newly assigned participant identifiers. It is also used by other ETL script to make this conversion. Below is the participant mapping that illustrates this relationship:
+
+```{r}
+# # Create the participant mapping data frame
+# participants_mapping <- data.frame(
+#   original_id = originalParticipantID,
+#   generated_id = databook$data$participant_id,
+#   row.names = originalParticipantID,
+#   stringsAsFactors = FALSE
+# )
+# 
+# # Display the participant mapping
+# participants_mapping[1:5,]
+```
+
+- **6. Data Validation and Clean up **
+
+Once all entries have been filled in, it is time to verify the integrity of your data. Start by examining the dataframe to ensure it adheres to the specifications outlined in the codebook.
+
+```{r, echo=F}
+# tbl <- BasicTable$new()
+# tbl$addData(data.frame(databook$data)[1:5,1:10])
+# tbl$renderTable()
+
+```
+
+Next, the script validates the entries using pointblank validation. This step ensures that the data meets the required standards and formats defined in the codebook. Any discrepancies will be captured in a validation report.
+
+```{r, echo=TRUE, include=TRUE, results='hide', message=FALSE, warning=FALSE}
+# Validate the data
+# databook$validation <- beFAIR::validateDataByCodebook(databook, print=FALSE)
+
+```
+
+Finally, you can inspect the detailed validation report. This report summarizes any failed validation rules and provides insights into necessary transformations to ensure compliance.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Print the validation report
+# pointblank::export_report(databook$validation$summary, paste0("participant_validation.html"))
+
+# tags$iframe(src = "participant_validation.html", width = "100%", height = "600px", style = "border: none;")
+
+```
+
+
+
+This vignette has outlined the critical steps in the ETL process, including study initialization, data population, and validation. These stages are essential for ensuring the accuracy and integrity of your data. As you proceed, you can now focus on adding experiments and conducting analyses to complete the project.
+
+## Adding an experiment
+
+To add a new experiment, simply run the addExperiment() function. You’ll need to provide a unique experiment name and specify the experiment type. This will initiate the necessary ETL (Extract, Transform, Load) processes in the `/experiments/[experiment_name]` directory. Ideally, the experiment name should include the study name(s), the experiment type, and, if applicable, the stimulation type.
+
+```{r}
+# addExperiment(experiment_name = "Study1_CyTOF_surface",
+#          experiment_type = "CyTOF")
+```
+
+Upon execution, a new folder for the experiment will be created, resembling the structure of the study folder. The ETL scripts are tailored to the specific experiment type and can be found in the scripts folder. As with the study, you'll need to complete the missing fields in the `meta.yaml` file. The next step is to specify the data locations inside the data folder and update the ETL scripts accordingly.
+
+## Adding an analysis

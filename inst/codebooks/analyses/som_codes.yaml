@@ -1,0 +1,74 @@
+version: 1.1
+authors: K.A. Stam
+created_at: 2026-07-07
+name: som_codes
+description: |
+  Table containing the trained SOM codebook vectors (prototype values) for each node-parameter
+  combination. Each row represents one weight in the SOM codebook matrix: the prototype value
+  of a single parameter at a single node. This is equivalent to the 'som$codes' output of the
+  kohonen R package. These values define the shape of the trained map and are used for cluster
+  phenotyping and visualization. Per-sample statistics (counts, medians) are stored separately
+  in som_measurement; cluster-level phenotypes in som_clusterphenotype.
+variables:
+  analysis_id:
+    description: Analysis ID; foreign key linking to the SOM analysis that produced this codebook.
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  node:
+    description: >
+      Sequential index of the SOM grid node (unit). In the kohonen R package, nodes are
+      numbered from 1 to (grid_x * grid_y), row by row from the top-left of the grid.
+      Together with parameter_id, this uniquely identifies one weight in the codebook matrix.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  parameter_id:
+    description: >
+      Identifier of the cytometry panel channel or marker used as input to the SOM. References
+      the channel_id from the relevant panel codebook (cytofpanel or aurorapanel). Together
+      with node, uniquely identifies one weight in the SOM codebook matrix.
+    foreign_key: cytofpanel.channel_id; aurorapanel.channel_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  value:
+    description: >
+      The trained SOM prototype (codebook) value for this parameter at this node. Represents
+      the weight of the SOM unit along this parameter's axis after training, on the same scale
+      as the preprocessed input data (typically arc-sinh transformed expression values).
+      Equivalent to som$codes[[layer]][node, parameter] in the kohonen package.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

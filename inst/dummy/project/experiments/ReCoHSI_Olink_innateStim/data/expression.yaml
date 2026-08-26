@@ -1,0 +1,4 @@
+contact_name: Emma Houlder
+contact_email: e.l.houlder@lumc.nl
+filetype: .csv
+path: !expr '"data/ReCoHSI/Olink_innate_stim.csv" |> (\(x) if (endsWith(here::here(), "TESTground/project")) here::here("..", x) else system.file(file.path("dummy", x), package = "beFAIR"))()'

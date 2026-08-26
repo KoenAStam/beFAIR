@@ -1,0 +1,109 @@
+version: 3.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: olinkexpression
+description: |
+  Table containing raw Olink proximity extension assay (PEA) data. Each row represents the
+  normalized protein expression (NPX) for a specific target in a specific participant event
+  (sample), linked to the experiment table via experiment_id and to events via event_id.
+variables:
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: ID given to the study or trial for this source id; foreign key to study.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Timepoint in days relative to start of the study.
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: ID given to the participant; foreign key. Automatically filled in.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Identifier for the event (sample). Consist of participant id and timepoint in days. Automatically filled in.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  target_id:
+    description: Identifier of the Olink assay target measured in this row.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  npx:
+    description: Olink-specific standardized Ct values
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  condition:
+    description: E.g. stimulation type. If no stimulation keep blank.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

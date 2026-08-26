@@ -1,0 +1,67 @@
+version: 2.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: analysis_luminex
+description: |
+  Extension of the analysis table for Luminex analyses. Contains Luminex-specific metadata
+  such as luminex type, functional assay, and data processing flags. Can be linked to the main
+  analysis table using analysis_id.
+variables:
+  analysis_id:
+    description: ID given to the analysis
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  remove_flagged:
+    description: Were flagged data (red_flags) removed?
+    type: character
+    type_sql: VARCHAR(255)
+    categories: yes;no
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  floor_fi_150:
+    description: Were fluorescence values <150 set to 150?
+    type: character
+    type_sql: VARCHAR(255)
+    categories: yes;no
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  blank_subtracted:
+    description: Was blank median FI subtracted from test FI?
+    type: character
+    type_sql: VARCHAR(255)
+    categories: yes;no
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  dilution_used:
+    description: Was the dilution used to calculate final fluorescence intensity
+    type: character
+    type_sql: VARCHAR(255)
+    categories: yes;no
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  set_negative_to_zero:
+    description: Were negative blank-subtracted FI values set to 0?
+    type: character
+    type_sql: VARCHAR(255)
+    categories: yes;no
+    labels: ~
+    validations:
+          - col_is_character: []
+

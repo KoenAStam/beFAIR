@@ -1,0 +1,111 @@
+version: 3.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: cytofbarcodingscheme
+description: |
+  Table storing the barcoding schemes used in a CyTOF mass cytometry experiment.
+  Each row corresponds to one barcoding scheme entry and is linked to both the experiment and
+  a specific participant sample via the event. Contains the metal isotope masses and binary
+  encoding scheme used to multiplex samples within a batch.
+variables:
+  experiment_id:
+    description: Unique identifier for the CyTOF experiment; foreign key referencing the experiment table.
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  source_id:
+    description: Original identifier assigned to the participant within the source study, as used in the raw data or study metadata.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: Identifier of the study or trial from which this source ID originates; foreign key to the study table.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Time of sample collection in days relative to the start of the study (day 0).
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: Harmonized participant identifier; foreign key to the id_mapping table. Automatically derived from study_id and source_id during the database update.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Unique identifier for the sample collection event, composed of the participant_id and the timepoint in days. Automatically filled in during the database update.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+
+  batch_id:
+    description: Identifier for the CyTOF acquisition batch in which this sample was measured. Samples within the same batch were acquired together and typically share the same normalization beads run.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  barcode_mass:
+    description: Comma-separated list of metal isotope masses (in atomic mass units) used in the barcoding scheme, e.g. '104, 106, 108, 110, 194, 198'. Each mass corresponds to one barcoding channel and defines the encoding alphabet for this sample.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  barcode_scheme:
+    description: Binary encoding indicating which metal isotopes from barcode_mass were used to label this sample (1 = labeled, 0 = unlabeled), given as a comma-separated string, e.g. '1, 1, 0, 0, 0, 0'. Together with barcode_mass, this uniquely identifies the sample within a batch.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

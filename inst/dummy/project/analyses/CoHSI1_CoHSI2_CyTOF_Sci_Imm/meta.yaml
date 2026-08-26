@@ -1,0 +1,16 @@
+version: '1.0'
+analysis_id: A1c4ef6
+name: CoHSI1_CoHSI2_CyTOF_Sci_Imm
+type: SOM
+study_ids: CHSI1, CHSI2
+experiment_ids: .na
+analysis_ids: .na
+table_dependecies: cytofbarcodingscheme[cd881d]
+publication_pmid: .na
+description: .na
+project_location: .na
+source_ready: .na
+git_repo: .na
+owner: .na
+pipeline_location: .na
+pipeline_description: .na

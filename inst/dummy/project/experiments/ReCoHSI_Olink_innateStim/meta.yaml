@@ -1,0 +1,19 @@
+version: 1.0
+experiment_id: E3bb45c
+name: ReCoHSI_Olink_innateStim
+type: Olink
+study_ids: RCHSI
+date: 2025
+sample_type: PBMC sups after stim
+location_data: \\vf-lucid-r-n.lumcnet.prod.intern\lucid-r-n$\Projects\Wormvacs2.0\Data\Experiments\ReCoHSI_Olink_innateStim\20250820AK_Emma_PBMC_stimulated_worm_antigen_Extended_2025-08-25.csv
+location_protocol: \\vf-lucid-r-n.lumcnet.prod.intern\lucid-r-n$\Projects\Wormvacs2.0\Data\Experiments\ReCoHSI_Olink_innateStim\RI_028_Stimulations.docx
+stimulation: med, LPS, AWA
+stimulation_descriptive: med_6hr, LPS_6hr, AWA_6hr
+operator: Emma Houlder & Alicia de Kroon
+machine: .na
+product: TARGET96
+panel: Olink Target 96 Inflammation
+panel_version: 3027
+plate_id: .na
+readout: .na
+delivery_mode: internal

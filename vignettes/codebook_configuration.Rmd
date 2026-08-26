@@ -1,0 +1,159 @@
+---
+title: "Codebook configuration guide"
+author: "K.A. Stam & F. de Weijer"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Codebook configuration guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+The YAML configuration is used to define the structure, types, and validation rules for each variable in the dataset.
+
+## Understanding the YAML structure
+
+The YAML file consists of entries for each variable in your dataset. Each entry includes a description, units, type, categories, labels, and validation rules. Here is a breakdown of each component:
+
+- **description**: A brief explanation of the variable.
+- **units**: The units of measurement (if applicable).
+- **type**: The data type of the variable in R (e.g., character, numeric).
+- **type_sql**: The data type of the variable in SQL (e.g., VARCHAR(255), DECIMAL).
+- **categories**: A list of possible categories for categorical variables, separated by a semicolon without spaces (e.g., "M;F").
+- **labels**: Labels for the categories, specifying the meaning of each category value. The format should use an equals sign (=) to associate each value with its label, without spaces around the equals sign. Each pair must be separated by a semicolon (;). Example: "0=No;1=Yes" or "M=Male;F=Female".
+- **validations**: A list of validation rules to ensure data quality. The [pointblank](https://rstudio.github.io/pointblank/index.html) package is used for validation. Each validation rule is defined as a key-value pair where the key is the name of the validation function (e.g., `col_is_character`, `col_vals_not_null`, `col_vals_regex`, `col_vals_between`) and the value is a list of arguments for that function.
+- **primary_key** *(optional)*: Set to `true` to mark this variable as the primary key of the table. Only one variable per codebook should carry this flag.
+- **foreign_key** *(optional)*: A reference in the format `<table>.<column>` (e.g., `study.study_id`) that indicates this variable links to a column in another table.
+
+## Example YAML configuration
+
+Here is an example of two variables in a YAML codebook — one primary key and one foreign key:
+
+```yaml
+participant_id:
+  description: ID given to the subject/volunteer of the study.
+  primary_key: true
+  units: ~
+  type: character
+  type_sql: VARCHAR(255)
+  categories: ~
+  labels: ~
+  validations:
+    - col_is_character: []
+    - col_vals_not_null:
+        label: "Participant ID is required"
+    - rows_distinct:
+        label: "Participant IDs are unique"
+
+study_id:
+  description: Identifier of the study this participant belongs to.
+  foreign_key: study.study_id
+  units: ~
+  type: character
+  type_sql: VARCHAR(255)
+  categories: ~
+  labels: ~
+  validations:
+    - col_is_character: []
+    - col_vals_not_null:
+        label: "Study ID is required"
+```
+
+## Version semantics
+
+Each codebook YAML has a top-level `version` field (e.g., `1.2`).
+
+- **Major version bump** (e.g., `1.x` → `2.x`): drops and recreates the corresponding database table.
+- **Minor version bump** (e.g., `1.1` → `1.2`): updates metadata only; existing data is preserved.
+
+See [Codebook Reference](codebooks_reference.html) for the full list of available codebooks.
+
+---
+
+## Adding custom codebooks
+
+beFAIR's built-in codebooks cover standard study, experiment, and analysis tables.
+For assays or schemas that are specific to your project, you can place custom YAML
+codebooks in the `codebooks/` folder that `startProject()` creates inside every
+FAIRground directory.
+
+### Folder structure
+
+Custom codebooks mirror the package layout:
+
+```
+MyProject/
+├── codebooks/
+│   ├── study/          ← study-level custom schemas
+│   ├── experiment/     ← experiment-level custom schemas
+│   └── analyses/       ← analysis-level custom schemas
+```
+
+Place your YAML file in the subdirectory that matches its pillar, e.g.
+`codebooks/analysis/my_analysis.yaml`.
+
+### Writing a custom codebook YAML
+
+Custom codebooks use exactly the same format as the built-in ones. The minimum
+required fields at the top level are `version`, `name`, and `variables`. The
+`primary_key` and `foreign_key` fields on individual variables are optional:
+
+```yaml
+version: 1.0
+name: my_analysis
+authors: Jane Doe
+created_at: 2026-03-23
+updated_at: 2026-03-23
+variables:
+  analysis_id:
+    description: Unique identifier for this analysis record.
+    primary_key: true
+    type: character
+    type_sql: VARCHAR(255)
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "analysis_id is required"
+      - rows_distinct:
+          label: "analysis_id values are unique"
+  event_id:
+    description: Event (participant × timepoint) this measurement belongs to.
+    foreign_key: event.event_id
+    type: character
+    type_sql: VARCHAR(255)
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "event_id is required"
+  concentration_ng_ml:
+    description: Measured concentration in ng/mL
+    type: numeric
+    type_sql: DECIMAL
+    validations:
+      - col_is_numeric: []
+```
+
+### How custom codebooks are treated
+
+Once a custom YAML is in place, all beFAIR functions work with it
+automatically:
+
+- `codebookToSummary()` — lists the custom codebook in a separate
+  **"Custom codebooks"** section, annotated with the project name.
+- `draftScript()` / `codebookToEntries()` — accept the custom codebook name
+  just like a built-in one.
+- `databasePrepareCodebooks()` — creates the corresponding database table and
+  tracks the codebook in `table_codebook` with `codebook_origin` set to the
+  project directory name.
+- `viewCodebookMap()` — renders custom codebook nodes in **purple** to
+  distinguish them from built-in nodes.
+
+### Naming conflicts
+
+If a custom codebook file has the same base name as a built-in codebook
+(e.g. you place `codebooks/study/participant.yaml` in your project), beFAIR
+will stop with an error listing the conflicting name. Always choose names that
+do not clash with the [built-in codebooks](codebooks_reference.html).

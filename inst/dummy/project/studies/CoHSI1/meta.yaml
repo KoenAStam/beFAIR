@@ -1,0 +1,33 @@
+version: '1.0'
+study_id: CHSI1
+name: CoHSI1
+study_organism: Human
+disease: Schistosomiasis
+pathogen: Schistosoma mansoni
+registration_code: NCT03951271
+facilities: Leiden University Medical Center
+cities: Leiden
+countries: Netherlands
+geopoints: 'lat: 52.163300 lon: 4.497400'
+primary_outcome: Safety and tolerability of controlled human Schistosoma mansoni infection,
+  Infection rate as measured by serum anti-SEA IgG antibodies
+summary: |-
+  CoHSI1 is a controlled human infection study to evaluate the safety and immunogenicity
+  of Schistosoma mansoni cercariae infection in healthy adult volunteers.
+
+  Volunteers are exposed to a defined number of cercariae and followed over 28 days to
+  assess infection development, immune responses, and safety endpoints.
+description: |-
+  COHSI-001 is a single-centre, open-label controlled human Schistosoma mansoni infection
+  (CHSI) study in healthy adult volunteers. Participants receive a defined dose of
+  S. mansoni cercariae by skin exposure and are monitored over 28 days.
+
+  The study aims to establish a safe and reproducible CHSI model that can be used for
+  vaccine efficacy testing and immunological research.
+actual_start_date: '2019-06-01'
+actual_completion_date: '2020-09-01'
+actual_enrollment: 20
+registration_link: https://clinicaltrials.gov/study/NCT03951271
+pbmc_location_file: ~
+pbmc_location_vials: ~
+pbmc_contact: ~

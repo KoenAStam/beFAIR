@@ -5,3 +5,6 @@
 .Ruserdata
 CLAUDE.md
 .claude
+.Rbuildignore
+.idea
+docs/

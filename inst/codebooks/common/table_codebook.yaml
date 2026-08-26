@@ -1,0 +1,100 @@
+version: 2.2
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+updated_at: 2026-03-23
+name: table_codebook
+description: |
+  Internal registry table tracking all codebooks registered in the FAIRground database.
+  Each row represents one codebook version that has been synchronized with the database schema.
+  This table is maintained automatically during databaseUpdate() and is not intended to be populated manually.
+variables:
+  codebook_id:
+    description: Identifier of the codebook, which is the path in beFAIR under codebooks
+      (e.g. study/participant or experiment/experiment). Primary key.
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "A codebook id is required"
+
+  codebook_name:
+    description: Name of the codebook (and table in the database)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "A codebook name is required"
+
+  codebook_origin:
+    description: "Origin of the codebook. 'beFAIR' for built-in package codebooks; the project name (directory basename) for custom codebooks."
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  codebook_version:
+    description: Current version of the codebook, major and minor annotation (e.g. 2.1, 3.0).
+      A change is considered minor if the description of a variables gets updated. A major change is a change
+      in variables, e.g. a new parameter entry.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "A codebook id is required"
+
+  authors:
+    description: Author(s) of the codebook
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  created_at:
+    description: Date and time of creation of the codebook in ISO 8601 format(YYYY-MM-DD)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  updated_at:
+    description: Date and time of last modification of codebook in ISO 8601 format(YYYY-MM-DD)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  n_parameters:
+    description: How many parameters are in the codebook
+    units: ~
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+

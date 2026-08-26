@@ -1,0 +1,73 @@
+---
+title: "Database: Smoke test"
+author: "K.A. Stam"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette: default
+vignette: >
+  %\VignetteIndexEntry{Database: Smoke test} 
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}\n"
+---
+
+```{r setup, include=FALSE}
+library(beFAIR)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<center>
+## 🚧 _Under construction_ 🚧
+</center>
+
+
+## Setting up a database
+
+After creating a FAIRground 
+([Starting a project](starting_a_project.html)), the next step is to set up a
+telational database. The `beFAIR` package is designed around interaction
+with a SQL database. All database operations are implemented via the `DBI` 
+interface, which allows beFAIR to work with different backends 
+(e.g., SQLite, PostgreSQL, MariaDB).
+
+How and where you host your database depends on your institutional 
+infrastructure. If you do not yet have a database configured, you can still 
+follow this vignette to understand how beFAIR manages database interactions.
+
+## Connection
+
+The most straightforward way to connect to a database is via a DSN 
+(Data Source Name) connection. On Windows, DSNs can be configured using the 
+__ODBC Data Sources__ administrator.
+
+Once configured, you can connect using `FAIRgroundConnect()`. This establishes a 
+default connection that will be used throughout your session.
+
+```{r, eval = FALSE}
+## How you normally would connect to the database 
+FAIRgroundConnect("LUCID_beFAIR")
+con <- FAIRgroundConnection() # If you want to retrieve the active connection
+```
+
+The active connection is stored internally and reused by beFAIR functions 
+unless explicitly overridden.
+
+To ensure reproducibility, this vignette uses an in-memory SQLite database via 
+`RSQLite`. We also initialize a dummy FAIRground containing example data 
+and ETL scripts.
+
+```{r}
+con <- FAIRgroundConnect(drv = RSQLite::SQLite(), dsn = ":memory:")
+
+dir <- file.path(tempdir(), "/beFAIR")
+startProject(dir = dir, dummy=TRUE)
+
+## Location of your dummy beFAIR
+# cat(normalizePath(dir))
+```
+
+
+```{r}
+databaseInitialize()
+DBI::dbReadTable(con, "table_script")
+```
+

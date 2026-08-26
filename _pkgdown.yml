@@ -1,0 +1,118 @@
+url: https://data.hypovax.org/beFAIR/
+
+exclude:
+ - CLAUDE.md
+
+template:
+  bootstrap: 5
+  theme: gruvbox-light
+  bslib:
+    base_font: system-ui
+
+home:
+  title: beFAIR
+  description: Codebook-Driven ETL Framework for Clinical Research Data
+
+navbar:
+  structure:
+    left:  [home, articles, reference, news]
+    right: [search, source, lightswitch]
+  components:
+    source:
+      text: Source
+      href: "https://git.lumc.nl/fdeweijer/supervaxr.git"
+
+reference:
+  - title: "Database"
+    desc: "Connect to and manage the FAIRground database."
+    contents:
+      - FAIRgroundConnect
+      - FAIRgroundConnection
+      - FAIRgroundDisconnect
+      - databaseInitialize
+      - databaseUpdate
+      - databasePrepareProjects
+      - databasePrepareDatasources
+      - databasePrepareDependencies
+      - databasePrepareCodebooks
+      - databasePrepareScripts
+      - databasePrepareData
+      - databaseExport
+      - databaseUpdateOverview
+      - databaseUpdatePublications
+      - getDatabase
+      - initTable
+      - sourceScript
+  - title: "Codebooks"
+    desc: "Read, inspect, and validate codebook schemas."
+    contents:
+      - codebookToEntries
+      - codebookToDraft
+      - codebookToSummary
+      - codebookToTable
+      - codebookRead
+      - getCodebookDescription
+      - viewCodebookMap
+      - validateDatabook
+  - title: "ETL Scripting"
+    desc: "Set up projects and draft ETL scripts."
+    contents:
+      - startProject
+      - addStudy
+      - addExperiment
+      - addAnalysis
+      - draftScript
+  - title: "Utilities"
+    desc: "Helper functions for data retrieval, participant IDs, and harmonization."
+    contents:
+      - collectTable
+      - collectTablesById
+      - entriesInDatabase
+      - getProjectInfo
+      - filterTableList
+      - validateSourceId
+      - FAIRgroundOverview
+      - overviewFAIRground
+      - plotDependencies
+      - getRelativeTimepoint
+      - validateCytofExperiment
+      - tableSummary
+      - tableVariableByStudy
+      - harmonizeDate
+      - harmonizeGates
+      - harmonizeMarkers
+      - searchId
+  - title: "Data"
+    desc: "External datasets used in the package"
+    contents:
+      - HGNC
+      - LUNC
+
+articles:
+  - title: "Overview"
+    desc: "Introduction to beFAIR and its three data pillars."
+    contents:
+      - start_here
+      - overview
+  - title: "Exploring the database"
+    desc: "For users who want to connect and query an existing FAIRground database."
+    contents:
+      - database_smoke_test
+      - exploring_and_joining_data_tables
+  - title: "Adding data and writing ETL scripts"
+    desc: "For users who contribute data by writing ETL scripts for studies, experiments, or analyses."
+    contents:
+      - adding_a_study
+      - adding_an_experiment
+      - adding_an_analysis
+  - title: "Database maintenance"
+    desc: "For developers and database maintainers who set up and maintain the FAIRground."
+    contents:
+      - starting_a_project
+      - developer_internals
+  - title: "Codebooks"
+    desc: "Reference documentation for the codebook schema system."
+    contents:
+      - codebook_configuration
+      - codebooks_reference
+

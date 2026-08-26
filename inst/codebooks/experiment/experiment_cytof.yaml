@@ -1,0 +1,36 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: experiment_cytof
+description: |
+  Extension of the experiment table for CyTOF experiments. Contains CyTOF-specific metadata.
+  Each row can be linked back to the main experiment table via experiment_id.
+variables:
+  experiment_id:
+    description: Identifier of the experiment; links to the experiment table.
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  barcoding_performed:
+    description: If the samples where barcoded (yes / no).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  reference_sample:
+    description: List of used referenced samples. Use "none" if no reference sample was used. # can be multiple
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

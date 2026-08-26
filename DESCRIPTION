@@ -1,0 +1,56 @@
+Package: beFAIR
+Type: Package
+Title: Codebook-Driven ETL Framework for Clinical Research Data
+Version: 0.1.0
+Authors@R:
+    c(person(given = "Koen",
+             family = "Stam",
+             role = c("cre", "aut"),
+             email = "k.a.stam@lumc.nl"),
+      person(given = "Floor",
+             family = "de Weijer",
+             role = c("aut"),
+             email = "f.de_weijer@lumc.nl")
+       )
+Description:
+    beFAIR provides an ETL (Extract-Transform-Load) framework for
+    clinical research platforms. It creates and manages structured
+    'FAIRground' project directories, enforces codebook-driven data
+    schemas in a SQL database, and automates the drafting, running,
+    and tracking of ETL scripts. Designed to harmonize data across
+    clinical studies using standardized codebooks, beFAIR supports
+    reproducible data ingestion and promotes FAIR (Findable,
+    Accessible, Interoperable, Reusable) data practices.
+License: GPL-3
+URL: https://data.hypovax.org/beFAIR
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+Depends: 
+  R (>= 4.3.0)
+Imports:
+  basictabler (>= 1.0.4),
+  DBI (>= 1.2.3),
+  dplyr (>= 1.0.10),
+  gt (>= 0.11.1),
+  httr (>= 1.4.7),
+  lgr (>= 0.5.0),
+  lubridate (>= 1.9.3), 
+  pointblank (>= 0.12.1),
+  RSQLite (>= 	2.4.6),
+  odbc (>= 1.5.0),
+  tidyr (>= 1.3.0),
+  tibble (>= 3.2.1),
+  yaml (>= 2.3.7)
+Suggests:
+    BiocStyle,
+    DiagrammeR (>= 1.0.10),
+    htmltools (>= 0.5.0),
+    htmlwidgets (>= 1.6.0),
+    igraph,
+    knitr,
+    rmarkdown,
+    RSQLite
+VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.3

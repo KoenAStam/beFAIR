@@ -1,0 +1,18 @@
+version: '1.0'
+experiment_id: E2b852c
+name: ReCoHSI_array_2023
+type: Array
+study_ids: RCHSI
+date: 2023
+sample_type: serum
+location_data: path_to_data
+location_protocol: path_to_protocol
+stimulation: ~
+stimulation_descriptive: ~
+operator: Emma Houlder
+machine: ~
+channel_red: .na
+channel_green: .na
+analysis_done_by: .na
+slides: 24
+delivery_mode: internal

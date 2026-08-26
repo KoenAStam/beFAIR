@@ -1,0 +1,100 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: arraypanel
+description: |
+  Table defining the composition of the array panel used in a specific experiment.
+  Each record describes a target_id that was spotted on the array, with a standardized
+  target_name (shared concept across studies) and a study-specific target_id (as defined by
+  the researcher). Additional metadata includes target type, source organism, catalog number,
+  and UniProt ID. The target_id links panel definitions to raw measurement results in the
+  arrayexpression table.
+variables:
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  target_name:
+    description: Standardized name for target. Shared concept across studies. Unique within one experiment.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Target name is required"
+
+  target_id:
+    description: Target entry name given to the target by the researcher during the experiment, corresponds to the entries in the outcome tables.
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Target entry is required"
+        - rows_distinct:
+            label: "Target entries are unique"
+
+  type:
+    description: Type of array (e.g., protein array, glycan array).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  organism:
+    description: Source organism of the spotted target (e.g., 'Plasmodium falciparum', 'Homo sapiens').
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  catolog_number:
+    description: Catalog number of the spotted antigen or antibody from the supplier.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  uniprot:
+    description: UniProt accession number of the target protein, if applicable.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

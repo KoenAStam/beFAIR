@@ -1,0 +1,56 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: cytofspillover
+description: |
+  Table containing CyTOF spillover matrices for a given experiment.
+  Each row represents the spillover contribution from one channel to another
+  (specified by channel_metal_from and channel_metal_to) and the measured value.
+  All rows are linked to a specific experiment via experiment_id.
+variables:
+  experiment_id:
+    description: Identifier of the experiment; links to the experiment table.
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  channel_metal_from:
+    description: The channel where spillover is calculated FROM, written as [element][mass], (e.g. Cd114, Yb171, Y89)
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  channel_metal_to:
+    description: The channel where spillover is calculated TO, written as [element][mass], (e.g. Cd114, Yb171, Y89)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  value:
+    description: degree of spillover
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

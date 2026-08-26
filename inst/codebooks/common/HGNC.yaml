@@ -1,0 +1,47 @@
+version: 1.0
+authors: K. Stam
+created_at: 2026-04-17
+name: HGNC
+description: |
+  HUGO Gene Nomenclature Committee (HGNC) reference table.
+  Contains approved gene symbols and their CD annotations from the
+  Human Cell Differentiation Molecule (HCDM) database.
+  Source: https://www.genenames.org/download/archive/ (August 2023).
+
+variables:
+  hgnc_id:
+    description: Unique identifier created by the HGNC for every approved symbol (e.g. "HGNC:5").
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(50)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "HGNC ID is required"
+      - rows_distinct:
+          label: "HGNC IDs must be unique"
+
+  symbol:
+    description: HGNC approved gene symbol (e.g. "CD3E").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "Gene symbol is required"
+
+  cd:
+    description: Symbol used within the Human Cell Differentiation Molecule (HCDM) database. Empty when no CD annotation is available.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []

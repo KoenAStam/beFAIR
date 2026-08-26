@@ -1,0 +1,202 @@
+version: 3.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: omiq_measurement
+description: |
+  Table containing OMIQ flow cytometry measurement data. Each row represents a measured value
+  for a specific event (sample), gating subset, or channel, including counts, medians, and
+  percentiles. Linked to the corresponding analysis via analysis_id and to the specific event
+  via event_id.
+variables:
+  analysis_id:
+    description: Analysis ID; foreign key
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: ID given to the study or trial for this source id; foreign key to study.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Timepoint in days relative to start of the study.
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: ID given to the participant; foreign key. Automatically filled in.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Identifier for the event (sample). Consist of participant id and timepoint in days. Automatically filled in.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  fcs_file:
+    description: Filename of the FCS file associated with this measurement.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  gating_id:
+    description: Unique identifier for the gating definition; links to omiq_gatingphenotype.gating_id.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  filter:
+    description: Name of the filter/gate applied in OMIQ (use 'CELLS' for all cells).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  subset_name:
+    description: Given name for a subset
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  batch:
+    description: Batch identifier for this measurement, used for batch correction tracking.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  condition:
+    description: Experimental condition label (e.g., stimulation type) for this measurement.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  measurement_of_channel_name:
+    description: Example BV-570A (N/A for count)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  measurement_of_target_name:
+    description: Target that was measured (e.g. IL-6, IFNg). Multiple targets can be added as they where filled in (e.g. with underscore)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  count:
+    description: Number of cells in the gated subset.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  median:
+    description: Median marker expression across cells in the gated subset.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  ptile_80:
+    description: 80th percentile of marker expression in the gated subset.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  ptile_95:
+    description: 95th percentile of marker expression in the gated subset.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+

@@ -1,0 +1,276 @@
+version: 2.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: study
+description: |
+  Table providing an overview of all studies (clinical trials) included in the database.
+  Each record represents a single study and contains general metadata such as study_id, name,
+  organism, disease, pathogen, registration code, locations (facilities, cities, countries,
+  geopoints), primary outcomes, summaries, and descriptions.
+  Additional fields include study dates, enrollment numbers, and PBMC storage information
+  (file, vial location, and contact), giving context for sample handling and study logistics.
+variables:
+  study_id:
+    description: Unique identifier assigned to the study or clinical trial.
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Study ID is required"
+        - rows_distinct:
+            label: "Study IDs are unique"
+
+  name:
+    description: |
+      Human-readable name of the study or clinical trial (e.g., "CapTan",
+      "HypoVax Phase II"). Used for display and reporting purposes.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  title:
+    description: |
+      Full, descriptive title of the study or clinical trial, written
+      in a way that is understandable without prior knowledge of abbreviations or acronyms.
+    units: ~
+    type: character
+    type_sql: VARCHAR(1000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_organism:
+    description: Organism in which the study is performed (e.g., "Homo sapiens" for
+      human trials, or the relevant model organism for pre-clinical studies).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  disease:
+    description: Name of the disease under investigation in the study
+      (e.g., "malaria", "schistosomiasis", "COVID-19").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  pathogen:
+    description: Name of the pathogen relevant to the study
+      (e.g., "Plasmodium falciparum", "Schistosoma mansoni").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  registration_code:
+    description: Official trial registration code from a clinical trial registry
+      (e.g., a ClinicalTrials.gov NCT number such as "NCT01234567" or an EudraCT number).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  facilities:
+    description: Names of the institutions or clinical facilities where the study was
+      conducted, separated by commas (e.g., "LUMC, Radboudumc").
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  cities:
+    description: Cities where the study was conducted, separated by commas
+      (e.g., "Leiden, Nijmegen").
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  countries:
+    description: Countries where the study was conducted, separated by commas
+      (e.g., "Netherlands, Gabon").
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  geopoints:
+    description: Geographic coordinates (latitude, longitude) of the study sites,
+      separated by commas. Format per entry is "lat,lon" (e.g., "52.1601,4.4970").
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  principal_investigator:
+    description: Name(s) of the principal investigator(s) responsible for conducting the study
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  contact_name:
+      description: Name of the contact person for questions about the study.
+      units: ~
+      type: character
+      type_sql: VARCHAR(255)
+      categories: ~
+      labels: ~
+      validations:
+          - col_is_character: []
+
+  contact_email:
+    description: Email address of the contact person for questions about the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  primary_outcome:
+    description: The pre-specified primary endpoint of the study, describing what the
+      trial is designed to measure (e.g., "vaccine efficacy against parasitemia by qPCR
+      at day 28 post-challenge").
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  summary:
+    description: Short summary of the study design, objectives, and key findings.
+      Intended for quick orientation when browsing studies in the database.
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  description:
+    description: Detailed description of the study, including background, design,
+      interventions, and population. May contain multiple paragraphs.
+    units: ~
+    type: character
+    type_sql: VARCHAR(8000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  actual_start_date:
+    description: Date on which the study actually started (i.e., first participant
+      enrolled), in ISO 8601 format (YYYY-MM-DD).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  actual_completion_date:
+    description: Date on which the study was completed (i.e., last participant visit
+      or data lock), in ISO 8601 format (YYYY-MM-DD).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  actual_enrollment:
+    description: Actual number of participants enrolled in the study (as opposed to
+      the planned or target enrollment).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  registration_link:
+    description: Full URL to the study registration page on a public clinical trial
+      registry (e.g., ClinicalTrials.gov or EU Clinical Trials Register).
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  pbmc_location_file:
+    description: Path to the file containing information about the PBMC sample storage location
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  pbmc_location_vials:
+    description: Physical storage location of the PBMC vials (e.g., freezer, nitrogen tank, or tower)
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  pbmc_contact:
+    description: Contact details (name, email) of the person responsible for PBMC sample storage
+    units: ~
+    type: character
+    type_sql: VARCHAR(5000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []

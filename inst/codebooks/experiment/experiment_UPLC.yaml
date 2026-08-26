@@ -1,0 +1,108 @@
+version: 2.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: experiment_UPLC
+description: |
+  Extension of the experiment table for UPLC (ultra-performance liquid chromatography) glycoprofiling
+  experiments. Contains experiment-specific metadata such as measurement target, glycan release method,
+  chromatography method, number of peaks, and number of plates.
+  Each row can be linked back to the main experiment table via experiment_id.
+variables:
+  experiment_id:
+    description: Identifier of the experiment; links to the experiment table.
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  measurement_target:
+    description: Type of biomolecule measured in this experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: N-glycans
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - N-glycans
+
+  glycan_release_method:
+    description: Method used to enzymatically release N-glycans from plasma proteins (e.g. PNGaseF)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: PNGaseF
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  chromatography_method:
+    description: Chromatographic method used to separate labeled glycans (e.g. HILIC-UHPLC-FLD)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: HILIC-UHPLC-FLD
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - HILIC-UHPLC-FLD
+
+  chromotography_column:
+    description: Chromatographic column
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  gradient_conditions:
+    description: Gradient conditions
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  fluorescent_dye:
+    description: Fluorescent dye
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  number_of_peaks:
+    description: Number of integrated glycan chromatographic peaks in the data
+    units: ~
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_integer: []
+
+  number_of_plates:
+    description: Total number of plates measured during the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []

@@ -1,0 +1,4 @@
+contact_name: Angela van Diepen
+contact_email: a.van_diepen@lumc.nl
+filetype: folder
+path: !expr '"data/ReCoHSI" |> (\(x) if (endsWith(here::here(), "TESTground/project")) here::here("..", x) else system.file(file.path("dummy", x), package = "beFAIR"))()'

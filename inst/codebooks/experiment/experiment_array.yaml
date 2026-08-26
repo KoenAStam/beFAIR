@@ -1,0 +1,58 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: experiment_array
+description: |
+  Extension of the experiment table for array experiments. Contains metadata specific to array
+  experiments. Each row can be linked back to the main experiment table via experiment_id.
+variables:
+  experiment_id:
+    description: Identifier of the experiment; links to the experiment table.
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  channel_red:
+    description: Antibody isotype measured in red channel
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  channel_green:
+    description: Antibody isotype measured in green channel
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+          - col_is_character: []
+
+  analysis_done_by:
+    description: Name of the person who manually drew the circles around the fluorescence spots during the array experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  slides:
+    description: Total number of slides measured during the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

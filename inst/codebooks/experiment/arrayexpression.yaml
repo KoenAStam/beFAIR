@@ -1,0 +1,282 @@
+version: 4.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: arrayexpression
+description: |
+  Table containing raw measurement results of array experiments before downstream processing.
+  Each row corresponds to the signal of a specific target_id within an experiment and is linked
+  to both an experiment_id and an event_id (a participant timepoint). Stores detailed fluorescence
+  intensity values (foreground/background, median/mean/SD), blank corrections, and spatial metadata
+  (coordinates, diameter) required for quality control and further analysis. The target_id links
+  each measurement to its definition in the arraypanel table.
+variables:
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: ID given to the study or trial for this source id; foreign key to study.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Timepoint in days relative to start of the study.
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: ID given to the participant; foreign key. Automatically filled in.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Identifier for the event (sample). Consist of participant id and timepoint in days. Automatically filled in.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  target_id:
+    description: Target id; foreign key to entry name in array panel
+    foreign_key: arraypanel.target_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  wavelength:
+    description: Measured wavelength
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  wavelength_name: # should we rename? something with detector / antibody
+    description: Name of what is measured at this wavelength (e.g. antibody subclass)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - IgM
+            - IgG
+
+  test_type:
+    description: Indication of whether actual test material is used versus a blank.
+      To be more specific test would correspond to a sample. Blank is nothing added.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: test;blank
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - test
+            - blank
+
+  slide:
+    description: The slide number
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  block:
+    description: The block number on the slide, needed for corrections and substraction of the blanks
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_f_median: # TODO describe what is F
+    description: Foreground (F) median fluorescence intensity measured for this spot.
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_f_mean:
+    description: Foreground (F) mean fluorescence intensity measured for this spot.
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_f_sd:
+    description: Foreground (F) standard deviation of fluorescence intensity measured for this spot.
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_b_median: # TODO describe what is B
+    description: Background (B) median fluorescence intensity measured around this spot.
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_b_mean:
+    description: Background (B) mean fluorescence intensity measured around this spot.
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_b_sd:
+    description: Background (B) standard deviation of fluorescence intensity measured around this spot.
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_f_minus_b_median:
+    description: Foreground minus background median fluorescence intensity (F - B median).
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fi_f_minus_b_mean:
+    description: Foreground minus background mean fluorescence intensity (F - B mean).
+    units: mfi
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  x_coordinate:
+    description: X coordinate of the circle
+    units: pixels
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  y_coordinate:
+    description: Y coordinate of the circle
+    units: pixels
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  diameter:
+    description: diameter of the circle
+    units: pixels
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  flags: # describe each flag (0, 50, -150)
+    description: Quality control flags for the spot (e.g., 0 = no flag, 50 = artifact flag, -150 = outlier flag).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  date:
+    description: Date of the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

@@ -1,0 +1,128 @@
+version: 1.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2026-04-21
+updated_at: 2026-04-21
+name: table_datasource
+description: |
+  Internal registry table tracking all raw data source YAML files found in the
+  data/ subfolders of each pillar (studies/, experiments/, analyses/).
+  Each row represents one data-source YAML file with its metadata, MD5 hash of
+  the actual data file, and a flag tracking whether the file is still present.
+  This table is maintained automatically during databasePrepareDatasources() and
+  is not intended to be populated manually.
+variables:
+  datasource_id:
+    description: Primary key. Relative path of the YAML file within the beFAIR
+      project. E.g. "studies/CoHSI1/data/participant.yaml".
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "A datasource id is required"
+
+  contact_name:
+    description: Name of the contact person responsible for this data source,
+      as written in the YAML contact_name field.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  contact_email:
+    description: E-mail address of the contact person responsible for this data
+      source, as written in the YAML contact_email field.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  data_path:
+    description: Full path to the actual data file on disk, taken from the YAML
+      path field.
+    units: ~
+    type: character
+    type_sql: VARCHAR(512)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  file_type:
+    description: File type of the data source, taken from the YAML filetype field
+      (e.g. ".csv", ".xlsx"). Use "folder" to treat data_path as a directory whose
+      contents are hashed collectively. NA when not specified.
+    units: ~
+    type: character
+    type_sql: VARCHAR(50)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  sheet:
+    description: Sheet name or index for multi-sheet files (e.g. Excel workbooks),
+      taken from the YAML sheet field. NA when not applicable.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  file_hash:
+    description: MD5 hash of the data source at the time of last sync. For regular
+      files, this is the MD5 of the file contents. For file_type "folder", this is
+      an MD5 of the concatenated sorted per-file hashes of all files in the directory
+      (subdirectories excluded). Set to NA if the path could not be accessed.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  present_in_project:
+    description: Flag indicating whether the YAML file still exists in the beFAIR
+      project (1) or has been removed since last registration (0). Never deleted
+      from the registry — rows are only marked absent.
+    units: ~
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  created_at:
+    description: ISO 8601 date (YYYY-MM-DD) when this data source was first
+      registered in table_datasource.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  updated_at:
+    description: ISO 8601 date (YYYY-MM-DD) of the last sync for this data source.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []

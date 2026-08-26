@@ -1,0 +1,125 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2026-01-21
+name: studydesign
+description: |
+  Table describing the planned design of each study arm: what interventions are administered,
+  at which timepoints, and at which doses. Each row represents one scheduled event (e.g., an
+  immunization, challenge, or drug administration) for a given study arm. Linked to the studyarm
+  table via studyarm_id and the study table via study_id.
+variables:
+  studyarm_id:
+    description: Identifier of the study arm this design event belongs to.
+    foreign_key: studyarm.studyarm_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Studyarm ID is required"
+
+  study_id:
+    description: Identifier of the study this design event belongs to.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Study ID is required"
+
+  timepoint:
+    description: Planned timepoint in days relative to the study start (day 0).
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  event_type:
+    description: Type of scheduled event (e.g., immunization, challenge, treatment, drug, prophylaxis).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - immunization
+              - vaccination
+              - placebo
+              - challenge
+              - drug
+              - treatment
+              - prophylaxis
+
+  event_name:
+    description: Short descriptive name for the scheduled event (e.g., "V1", "CHMI").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  product_name:
+    description: Name of the product administered (e.g., vaccine name, drug name).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  product_administration:
+    description: Route of administration for the product (e.g., "intramuscular", "DVI", "mosquito bites").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  dose:
+    description: Planned dose of the product administered.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  dose_unit:
+    description: Unit of the dose (e.g., "sporozoites", "mg", "mL").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset.
+      It is automatically filled during the database update and serves as a foreign
+      key to the table_script table. It equals the relative path name of the script
+      inside the FAIRground (e.g. "\studies\CapTan\scripts\event").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

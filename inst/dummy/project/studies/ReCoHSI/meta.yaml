@@ -1,0 +1,24 @@
+version: '1.0'
+study_id: RCHSI
+name: ReCoHSI
+title: Safety and Protective Efficacy of Repeated Controlled Human Schistosoma Mansoni Infection
+study_organism: Human
+disease: Schistosomiasis
+pathogen: Schistosoma mansoni
+registration_code: NCT05085470
+facilities: Leiden University Medical Center
+cities: Leiden
+countries: Netherlands
+geopoints: 'lat: 52.158330 lon: 4.493060'
+primary_outcome: Protective efficacy, Safety of (repeated) exposure to male Sm cercariae
+  based on self-reported adverse events
+summary: A group of 24 healthy volunteers are challenged one or three times with 20
+  male Schistosoma mansoni cercariae to investigate whether this leads to protection
+  and to identify potential correlates of protection
+actual_start_date: '2021-10-29'
+actual_completion_date: '2023-01-11'
+actual_enrollment: 24
+registration_link: https://clinicaltrials.gov/study/NCT05085470
+pbmc_location_file: \\vf-para-cid-clinicaltrials\para-cid-clinicaltrials$\Samples\- PBMC\PBMC ReCoHSI\20221227 PBMC ReCoHSI LN2 overview.xlsx
+pbmc_location_vials: Tank 16 - tower 20, 21, 22, 23
+pbmc_contact: Gopal Murugan (r.a.murugan@lumc.nl), Laura de Bes (h.m.de_bes-roeleveld@lumc.nl)

@@ -1,0 +1,101 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: publications
+description: |
+  Registry of publications linked to studies in the database.
+  Each row represents a single publication, identified by its PubMed ID (PMID) or another unique identifier.
+  Publications are linked to one or more studies via the study_ids column.
+variables:
+  publication_id:
+    description: Unique ID for each publication.
+      Preferably the PubMed reference number (PMID), but can also be another unique identifier.
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Publication ID is required"
+        - rows_distinct:
+            label: "Publication IDs are unique"
+
+  study_ids:
+    description: Semicolon-separated list of study IDs that this publication is linked to
+      (e.g., "CHSI1;CHSI2").
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "At least one related study ID is required"
+
+  link:
+    description: URL to the PubMed entry for the publication, if available.
+      If no PubMed entry exists, provide a link to the preprint or publisher’s page.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  pmid:
+    description: PubMed ID (PMID) of the publication.
+      This is a unique numeric identifier assigned by PubMed to each indexed publication.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  first_author:
+    description: First author of the publication.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  year:
+    description: Year of publication.
+    units: Year
+    type: integer
+    type_sql: INTEGER
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  journal:
+    description: Name of the journal where the publication appeared.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  title:
+    description: Title of the publication.
+    units: ~
+    type: character
+    type_sql: VARCHAR(1000)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+

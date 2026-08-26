@@ -1,0 +1,5 @@
+contact_name: Mirte Balke
+contact_email: m.balke@lumc.nl
+filetype: .xlsx
+path: !expr '"data/ReCoHSI/ReCoHSI_study_excel_export.xlsx" |> (\(x) if (endsWith(here::here(), "TESTground/project")) here::here("..", x) else system.file(file.path("dummy", x), package = "beFAIR"))()'
+sheet: AE

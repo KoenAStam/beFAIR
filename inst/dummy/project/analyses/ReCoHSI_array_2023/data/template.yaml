@@ -1,0 +1,5 @@
+contact_name: ~ # Name of the person to contact for any inquiries or support
+contact_email: ~ # Email address of the contact person
+filetype: ~ # Extension of the data file (e.g. .xlsx or .csv)
+path: ~ # Full file path to the data file including file extension
+sheet: ~ # Name of the sheet within the file that contains the relevant data (if applicable)

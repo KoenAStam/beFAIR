@@ -1,0 +1,164 @@
+version: 5.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: glycoprofiling_measurement
+description: |
+  Table containing glycoprofiling measurement data from UPLC or LC-MS experiments.
+  Each row represents the relative abundance and intensity of a specific glycan structure
+  for one participant event, including backbone information and signal-to-noise filtering.
+variables:
+  analysis_id:
+    description: Analysis ID; foreign key
+    foreign_key: analysis.analysis_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: ID given to the study or trial for this source id; foreign key to study.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Timepoint in days relative to start of the study.
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: ID given to the participant; foreign key. Automatically filled in.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Identifier for the event (sample). Consist of participant id and timepoint in days. Automatically filled in.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  sample_type:
+    description: Type of sample used in the assay
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: plasma;serum
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - plasma
+            - serum
+
+  glycan_id:
+    description: Glycan id, foreign key to glycan dictionary (e.g. 1H3N4F1)
+    foreign_key: glycan_dictionary.glycan_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  backbone:
+    description: Backbone, example IgG1, IgG4 if any else NA
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  signal_to_noise:
+    description: Signal to noise value, if any
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  final_chosen:
+    description: If this value of signal to noise is the chosen as the final value for this sample
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  glycan_composition_name:
+    description: Example 1H3N4F1, fucosylation or peak 1
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  intensity:
+    description: Raw fluorescence or signal intensity for this glycan structure.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  relative_abundance:
+    description: Relative abundance of the glycan structure after processing (batch correction and normalization applied where specified).
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

@@ -1,0 +1,198 @@
+---
+title: "Study report"
+date: "`r Sys.Date()`"
+format: html
+params:
+  studyID: "CHSI1"
+  serverName: "LUMC_sql_64"
+  dbName: "LUCID_FAIRPOINT_TEST"
+css: study_report.css
+self-contained: true 
+embed-resource: true
+
+---
+
+```{r, results="asis", echo=F, message=F, warning=FALSE}
+library(dplyr)
+library(gt)
+
+## DB connection
+FAIRgroundConnection(con)
+
+# Function to count records for a specific study_id in a table
+countRecordsForStudy <- function(table_name, study_id, con) {
+  query <- glue::glue("SELECT COUNT(*) AS count FROM {table_name} WHERE study_id = '{study_id}'")
+  result <- tryCatch({
+    DBI::dbGetQuery(con, query)
+  }, error = function(e) {
+    message("Error fetching data for table: ", table_name)
+    return(data.frame(count = NA))
+  })
+  return(result$count)
+}
+
+# Define possible study tables
+studyTables <- c("participant", "participant_basemalvac", "participant_wormvacs", "event", "event_wormvacs")
+
+# Count rows for each study table
+count <- purrr::map_dbl(studyTables, countRecordsForStudy, study_id = params$studyID, con = con)
+
+# Retrieve study table for this studyID
+study <- DBI::dbGetQuery(con, glue::glue("SELECT * FROM study WHERE study_id = '{params$studyID}'"))
+
+# Create study table with available tables
+studyTable <- tibble(
+  tableName = studyTables,
+  color = "",
+  containsStudy = count > 0,
+  numberRows = count
+  ) %>%
+  mutate(color = "") %>%
+  gt() %>%
+  tab_header(title = md("**Available study tables**")) %>%
+  cols_label(
+    tableName = "Table Name",
+    color = "",
+    containsStudy = "Available",
+    numberRows = "# of Rows"
+  ) %>%
+  data_color(
+    columns = containsStudy,
+    target_columns = color,
+      fn = scales::col_numeric(
+        palette = scales::brewer_pal(palette = "RdYlGn")(9),
+        domain = c(TRUE, FALSE)
+      )  
+    )
+
+## Create the report 
+cat("##", study$name, "\n\n")
+cat("**Study ID**:", study$study_id, "<br>")
+cat("**Study name**:", study$name, "<br>")
+cat("**Description**:", ifelse(is.na(study$description), "No description available", study$description), "<br>")
+cat("[View registration](", study$registration_link, ")", "\n\n", sep = "")
+cat("<br>")
+
+studyTable %>% 
+  gt::as_raw_html() %>% 
+  cat()
+
+cat("<br> \n\n")
+cat("##### Participant table \n")
+
+# participant table
+participantTable <- DBI::dbGetQuery(con, "SELECT * FROM participant")
+participantData <- participantTable %>% filter(study_id == params$studyID)
+
+participantReport <- beFAIR::tableSummary(participantData, "participant")
+participantReport %>% as_raw_html() %>% cat()
+
+cat("<br> \n\n")
+cat("##### Participant basemalvac table \n")
+
+# participant basemalvac
+participantIDs <- unique(participantData$participant_id)
+participantBMVTable <- DBI::dbGetQuery(con, "SELECT * FROM participant_basemalvac")
+participantBMVData <- participantBMVTable %>% filter(participant_id %in% participantIDs)
+
+if (nrow(participantBMVData) > 0) {
+  participantBMVReport <- beFAIR::tableSummary(participantBMVData, "participant_basemalvac")
+  participantBMVReport %>% as_raw_html() %>% cat()
+
+}
+
+cat("<br> \n\n")
+cat("##### Participant wormvacs table \n")
+
+# participant wormvacs
+participantIDs <- unique(participantData$participant_id)
+participantWormvacsTable <- DBI::dbGetQuery(con, "SELECT * FROM participant_wormvacs")
+participantWormvacsData <- participantWormvacsTable %>% filter(participant_id %in% participantIDs)
+
+if (nrow(participantWormvacsData) > 0) {
+  participantWormvacsData <- beFAIR::tableSummary(participantWormvacsData, "participant_wormvacs")
+  participantWormvacsData %>% as_raw_html() %>% cat()
+
+}
+
+```
+
+```{r, results="asis", echo=F, message=F, warning=FALSE}
+
+cat("## Related experiments \n")
+
+# get the related experiments
+experiments <- DBI::dbGetQuery(con, "SELECT * FROM experiment")
+relatedExperiments <- experiments %>% 
+  filter(params$studyID == study_ids) #TODO handle multiple study_ids
+
+# per type get the tables
+experimentTypeMapping <- list(
+  "CyTOF"= c("cytofpanel", "cytofbarcodingscheme"),
+  "array"= c("arrayexpression", "arraypanel"),
+  "Luminex"= c("luminexexpression")
+)
+
+# Check if there are related experiments
+if (nrow(relatedExperiments) == 0) {
+  cat("No related experiments available\n\n")
+} else {
+
+  # for each experiment check if the relevant experiment tables exist
+  # TODO improve performance (get each table type only 1 time)
+  for (i in seq_len(nrow(relatedExperiments))) {
+    
+    exp <- relatedExperiments[i, ] 
+    
+    # create first part of experiment report
+    cat("#####", exp$name, " (", exp$experiment_id, ")", "\n")
+    cat("Type:", exp$type, "\n\n")
+    
+    
+    # Define the tables based on the experiment type
+    expTables <- experimentTypeMapping[[exp$type]]
+    
+    # Check if there are experiment tables defined for this type
+    if (is.null(expTables)) {
+      cat("No related tables for experiment type:", exp$type, "\n\n")
+    } else {
+      
+      # loop over each table type and store if the experiment_id exist in the table
+      for (table in expTables) {
+        table_data <- DBI::dbGetQuery(con, paste0("SELECT * FROM " , table))
+        # Check if experiment_id exists in the table, and store the result in a logical value
+        relatedExperiments[i, table] <- ifelse(nrow(table_data %>% filter(experiment_id == exp$experiment_id)) > 0, TRUE, FALSE)
+      }
+      
+      # Create the table availability for the current experiment
+      tableAvailability <- data.frame(
+        tableName = expTables,
+        available = sapply(expTables, function(table) { 
+          return(relatedExperiments[i, table])
+        })
+      )
+      # Build the gt table for the experiment
+      experimentTable <- tableAvailability %>%
+        mutate(color = "") %>% 
+        gt() %>%
+        data_color(
+          columns = available,
+          target_columns = color,
+          colors = scales::col_numeric(palette = "RdYlGn", domain = c(FALSE, TRUE))
+        ) %>%
+        tab_options(column_labels.hidden = TRUE) 
+      
+      # print the table
+      experimentTable %>% 
+        gt::as_raw_html() %>% 
+        cat()
+      
+      cat("<br> \n\n")
+  
+    }
+  }
+}
+
+cat("## Related analyses \n")
+```
+

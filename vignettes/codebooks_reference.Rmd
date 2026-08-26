@@ -1,0 +1,124 @@
+---
+title: "Codebook reference"
+author: "K.A. Stam; F. de Weijer"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Codebook reference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(yaml)
+```
+
+This page documents all codebooks included in beFAIR. Each codebook defines the schema for a database table — its variables, types, and validation rules.
+
+See [Codebook configuration guide](codebook_configuration.html) for details on the YAML format.
+
+```{r helpers, include=FALSE}
+desc_file <- system.file("codebooks/codebook_description.yaml", package = "beFAIR")
+table_descriptions <- yaml::read_yaml(desc_file)
+
+safe_str <- function(x) {
+  if (is.null(x) || (length(x) == 1 && is.na(x))) "" else trimws(as.character(x))
+}
+
+render_codebook_section <- function(cb_name, cb_path) {
+  cb <- yaml::read_yaml(cb_path)
+
+  td <- table_descriptions[[cb_name]]
+  description  <- if (!is.null(td$description))  trimws(td$description)  else NULL
+  primary_key  <- if (!is.null(td$primary_key)  && length(td$primary_key)  > 0)
+    paste(sapply(td$primary_key,  as.character), collapse = ", ") else NULL
+  foreign_keys <- if (!is.null(td$foreign_keys) && length(td$foreign_keys) > 0)
+    paste(sapply(td$foreign_keys, as.character), collapse = ", ") else NULL
+
+  cat(sprintf("\n### `%s`\n\n", cb_name))
+
+  if (!is.null(description)) cat(description, "\n\n")
+
+  meta <- sprintf("**Version:** %s", safe_str(cb$version))
+  if (!is.null(primary_key))
+    meta <- paste0(meta, " &nbsp;&nbsp;|&nbsp;&nbsp; **Primary key:** `", primary_key, "`")
+  if (!is.null(foreign_keys))
+    meta <- paste0(meta, " &nbsp;&nbsp;|&nbsp;&nbsp; **Foreign keys:** `", foreign_keys, "`")
+  cat(meta, "\n\n")
+
+  if (is.null(cb$variables) || length(cb$variables) == 0) {
+    cat("_No variables defined._\n\n")
+    return(invisible(NULL))
+  }
+
+  rows <- lapply(names(cb$variables), function(var_name) {
+    v <- cb$variables[[var_name]]
+    role <- if (isTRUE(v$primary_key)) {
+      "PK"
+    } else if (!is.null(v$foreign_key)) {
+      paste0("FK \u2192 ", v$foreign_key)
+    } else {
+      ""
+    }
+    data.frame(
+      Variable    = var_name,
+      Role        = role,
+      Description = safe_str(v$description),
+      Type        = safe_str(v$type),
+      `SQL Type`  = safe_str(v$type_sql),
+      Categories  = safe_str(v$categories),
+      Labels      = safe_str(v$labels),
+      stringsAsFactors = FALSE,
+      check.names      = FALSE
+    )
+  })
+  df <- do.call(rbind, rows)
+  print(knitr::kable(df, format = "html", escape = TRUE))
+  cat("\n")
+}
+
+render_pillar <- function(pillar) {
+  dir_path <- system.file(paste0("codebooks/", pillar), package = "beFAIR")
+  files    <- sort(list.files(dir_path, pattern = "\\.yaml$", full.names = TRUE))
+  for (f in files) {
+    cb_name <- tools::file_path_sans_ext(basename(f))
+    render_codebook_section(cb_name, f)
+  }
+}
+```
+
+## Study
+
+Tables related to participants, events, and study design.
+
+```{r study, results='asis'}
+render_pillar("study")
+```
+
+## Experiment
+
+Tables related to laboratory experiments and measurement panels.
+
+```{r experiment, results='asis'}
+render_pillar("experiment")
+```
+
+## Analyses
+
+Tables containing processed measurement results.
+
+```{r analyses, results='asis'}
+render_pillar("analyses")
+```
+
+## Common
+
+Internal registry tables used by beFAIR to track scripts and codebook versions.
+
+```{r common, results='asis'}
+render_pillar("common")
+```

@@ -1,0 +1,116 @@
+version: 1.0
+authors: F. de Weijer
+created_at: 2026-02-23
+name: glycan_dictionary
+description: |
+  Registry of glycans and their shorthand composition, external identifiers,
+  and biological context.
+  Each row represents one glycan entry.
+
+variables:
+  glycan_id:
+    description: Unique internal identifier for the glycan entry.
+      This field may be empty when no internal glycan ID has been assigned yet.
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - rows_distinct:
+          label: "Glycan IDs must be unique"
+
+  glycan_composition:
+    description: Short glycan composition notation
+      (e.g., "H3N4F1" or "H4N4F1S1").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "Short glycan composition is required"
+
+  protein:
+    description: Protein associated with the glycan entry.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  species:
+    description: Species in which the glycan was observed.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  glycan_type:
+    description: Type of glycan, for example N-linked or O-linked.
+    units: ~
+    type: character
+    type_sql: VARCHAR(100)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  glytoucan_id:
+    description: GlyTouCan identifier for the glycan, if available.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  hex:
+    description: Number of hexose residues derived from the composition.
+    units: count
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  hexnac:
+    description: Number of N-acetylhexosamine residues derived from the composition.
+    units: count
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  fuc:
+    description: Number of fucose residues derived from dHex in the composition.
+    units: count
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  neuac:
+    description: Number of N-acetylneuraminic acid residues derived from the composition.
+    units: count
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []

@@ -1,0 +1,214 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: glycanarraypanel
+description: |
+  Table defining the glycan composition of the glycan array panel. Each row describes one glycan
+  target, including its standardized name, derivation method (natural or synthetic), source organism,
+  life stage, glycan type, enzyme used, HPLC migration values, concentration, and any synthetic
+  naming. Linked to experiments via the glycan array experiment tables.
+variables:
+  target_name:
+    description: Standardized name for target. Shared concept across studies. Unique within one experiment.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Target name is required"
+        - rows_distinct:
+            label: "Target names are unique"
+
+  target_entry:
+    description: Target entry name given to the target by the researcher during the experiment, corresponds to the entries in the outcome tables.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Target entry is required"
+        - rows_distinct:
+            label: "Target entries are unique"
+
+  derived:
+    description: Indicates whether the fraction is derived naturally or synthetically
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - natural
+              - synthetic
+              - crude antigen
+              - purified antigen
+
+  source_organism:
+    description: Organism of the source
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - SM
+              - NA
+
+  source_lifestage:
+    description: Life stage of the source
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~ # cercariae, worms, eggs
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - Cercariae
+              - Worms
+              - Eggs
+              - NA
+
+  glycan_type:
+    description: Type of glycan
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~ # N-glycan, O-glycan, lipid
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - N-glycan
+              - O-glycan
+              - GSL-glycan
+              - NA
+
+  enzym:
+    description: Enzyme used in the process
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - PNGaseF
+              - PNGaseA
+              - EGC
+              - NA
+
+  hplc_normal_phase:
+    description: Normal-phase HPLC retention value for this glycan.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  hplc_normal_phase_file:
+    description: File of the hplc normal phase
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  hplc_normal_phase_date:
+    description: Date of the hplc normal phase # TODO format as data
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  hplc_reverse_phase:
+    description: Reverse-phase HPLC retention value for this glycan.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  hplc_reverse_phase_file:
+    description: File of the hplc normal phase
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  hplc_reverse_phase_date:
+    description: Date of the hplc normal phase
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  concentration:
+    description: Printed concentration of the spotted glycan.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  concentration_unit:
+    description: Unit of the printed concentration (e.g., 'pmol/spot').
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  synthetic_name:
+    description: Name given to the synthetic fraction (applicable to synthetic derived)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

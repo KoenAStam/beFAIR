@@ -1,0 +1,188 @@
+version: 2.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2026-03-12
+name: analysis_glycoprofiling
+description: |
+  Extension of the analysis table for glycoprofiling analyses. Contains metadata specific to glycoprofiling.
+variables:
+  analysis_id:
+    description: ID given to the analysis
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Analysis ID is required"
+
+  protein_specific:
+    description: Protein specific
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  antigen_specific:
+    description: Antigen specific
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  antigen:
+    description: Specific for which antigen
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  glycan_release:
+    description: Glycan release
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  software:
+    description: Used software for the analysis
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  lacytools_version:
+    description: Version of LaCyTools used for glycan analysis
+    units: ~
+    type: character
+    type_sql: VARCHAR(50)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  lacytools_build:
+    description: Build number of LaCyTools used
+    units: ~
+    type: character
+    type_sql: VARCHAR(50)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  calib_mass_window:
+    description: Mass window used for calibration
+    units: m/z
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  calib_sn_cutoff:
+    description: Signal-to-noise cutoff used during calibration
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  calib_min_peak:
+    description: Minimum number of peaks required for calibration
+    units: count
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_integer: []
+
+  sum_spectrum_resolution:
+    description: Resolution used for summed spectrum generation
+    units: ~
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_integer: []
+
+  mass_window:
+    description: Mass extraction window
+    units: m/z
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  time_window:
+    description: Retention time window for peak extraction
+    units: seconds
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  min_charge:
+    description: Minimum charge state considered during extraction
+    units: charge
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_integer: []
+
+  max_charge:
+    description: Maximum charge state considered during extraction
+    units: charge
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_integer: []
+
+  min_total:
+    description: Minimum total signal required for peak inclusion
+    units: fraction
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  background_window:
+    description: Window size used for background estimation
+    units: scans
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_integer: []

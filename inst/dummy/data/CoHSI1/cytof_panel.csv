@@ -1,0 +1,60 @@
+Surface;;;;;;;;;;;
+#;Label;Specificity;Clone;Vendor;Catno;RRID;Lot no.;self_conjugated;Staining;Enddilution;work
+1;89Y;CD45;HI30;Fluidigm;3089003B;AB_2938863;2191908;0;extracellular;100;50
+2;115In;CD45RA;HI100;Biolegend;304102;AB_416326;19-09-2019 MK;1;extracellular;100;50
+3;141Pr;CD196 (CCR6);G034E3;Fluidigm;3141003A;AB_2687639;3471805;0;extracellular;400;200
+4;142Nd;CD19;HIB19;Fluidigm;3142001B;AB_2651155;141921;0;extracellular;200;100
+5;143Nd;CD117 (c-Kit);104D2;Biolegend;313223;AB_2562829 ;10-09-2019 PN;1;extracellular;100;50
+6;145Nd;CD4;RPA-T4;Biolegend;300541;AB_2562809;23-08-2019 MK;1;extracellular;200;100
+7;146Nd;CD8a;RPA-T8;Biolegend;301053;AB_2562810;19-09-2019 MK;1;extracellular;200;100
+8;147Sm;CD183 (CXCR3);G025H7;Biolegend;353733;AB_2563724;06-08-2019 PN;1;extracellular;100;50
+9;148Nd;CD14;M5E2;Biolegend;301843;AB_2562813;10-09-2019 PN;1;extracellular;100;50
+10;149Sm;CD25 (IL-2Ra);2A3;Fluidigm;3149010B;AB_2756416;161910;0;extracellular;100;50
+11;150Nd;CD185 (CXCR5);J252D4;Biolegend;356902;AB_2561811;10-09-2019 PN;1;extracellular;100;50
+12;151Eu;CD123;6H6;Biolegend;306027;AB_2562823 ;10-09-2019 PN;1;extracellular;200;100
+13;152Sm;TCRgd;11F2;Fluidigm;3152008B;AB_2687643;441915;0;extracellular;50;25
+14;153Eu;CD7;CD7-6B7;Biolegend;343111;AB_2563761;10-09-2019 PN;1;extracellular;200;100
+15;154Sm;CD163;GHI/61;Fluidigm;3154007B;AB_2661797;1421723;0;extracellular;100;50
+16;155Gd;CD278 (ICOS);C398.4A;Biolegend;313502;AB_416326;26-mrt-19;1;extracellular;50;25
+17;156Gd;CD294 (CRTH2);BM16;Biolegend;350102;AB_1063986;10-09-2019 PN;1;extracellular;100;50
+18;158Gd;CD122 (IL-2Rb);TU27;BioLegend;339015;AB_2563712;10-09-2019 PN;1;extracellular;100;50
+19;159Tb;CD197 (CCR7);G043H7;Biolegend;353237;AB_2563726;06-08-2019 PN;1;extracellular;100;50
+20;161Dy;KLRG1 (MAFA);REA261;Miltenyi;130-126-458;AB_2889702;19-09-2019 MK;1;extracellular;200;100
+21;162Dy;CD11c;Bu15;Biolegend;337221;AB_2562834;10-09-2019 PN;1;extracellular;100;50
+22;164Dy;CD161;HP-3G10;Biolegend;339919;AB_2562836;11-09-2019 MK;1;extracellular;100;50
+23;165Ho;CD127 (IL-7Ra);AO19D5;Fluidigm;3165008B;AB_2868401;2541802;0;extracellular;200;100
+24;167Er;CD27;O323;Biolegend;302839;AB_2562817;11-09-2019 MK;1;extracellular;200;100
+25;168Er;HLA-DR;L243;Biolegend;307651;AB_2562826;19-09-2019 MK;1;extracellular;200;100
+26;170Er;CD3;UCHT1;Fluidigm;3170001B;AB_2811085;2601806;0;extracellular;100;50
+27;171Yb;CD28;CD28.2;Biolegend;302902;AB_314304;06-08-2019 PN;1;extracellular;100;50
+28;172Yb;CD38;HIT2;Biolegend;303535;AB_2562819;11-09-2019 MK;1;extracellular;200;100
+29;173Yb;CD45RO;UCHL1;Biolegend;304239;AB_2563752;11-09-2019 MK;1;extracellular;100;50
+30;174Yb;CD335 (NKp46);92E;Biolegend;331902;AB_1027637;B180373. Conjugated on 21-03-2019;1;extracellular;100;50
+31;175Lu;CD279 (PD-1);EH12.2H7;Biolegend;329941;AB_2563734;11-09-2019 MK;1;extracellular;100;50
+32;176Yb;CD56;NCAM16.2;Fluidigm;3176008B;AB_2938870;2151801;0;extracellular;200;100
+33;209Bi;CD16;3G8;Fluidigm;3209002B;AB_2756431;741811;0;extracellular;200;100
+;;;;;;;;;;;
+Intranuclear;;;;;;;;;;;
+;Label;Specificity;Clone;Vendor;Cat no;RRID;Lot no.;self_conjugated;Staining;End dilution;Working dilution
+34;169Tm;GATA3;REA174;Miltenyi;130-108-061;AB_2651829;06-08-2019 PN;1;intracellular;50;25
+35;166Er;Tbet;4B10;Biolegend;644825;AB_2563788 ;06-08-2019 PN;1;intracellular;100;50
+36;163Dy;CD152 (CTLA-4);BNI3 ;Biolegend;;;B271059. Conjugated on 21-03-2019;1;intracellular;100;50
+37;160Gd;FOXp3;PCH101;ebioscience;14-4776-82;AB_467554;02-jun-17;1;intracellular;50;25
+;;;;;;;;;;;
+;;;;;;;;;;;
+;;;;;;;;;;;
+Barcodes;;;;;;;;;;;
+;Label;Specificity;Clone;Vendor;Cat no;RRID;Lot no.;self_conjugated;Staining;End dilution;Working dilution
+43;104Pd;B2M;2M2;Biolegend;316302;AB_492835;;1;extracellular;50;25
+44;106Pd;B2M;2M2;Biolegend;316302;AB_492835;;1;extracellular;50;25
+45;108Pd;B2M;2M2;Biolegend;316302;AB_492835;;1;extracellular;50;25
+46;110Pd;B2M;2M2;Biolegend;316302;AB_492835;;1;extracellular;50;25
+47;194Pt;B2M;2M2;Biolegend;316302;AB_492835;;1;extracellular;50;25
+48;198Pt;B2M;2M2;Biolegend;316302;AB_492835;;1;extracellular;50;25
+;;;;;;;;;;;
+;;;;;;;;;;;
+Livedead and DNA;;;;;;;;;;;
+;Label;Specificity;Clone;Vendor;Cat no;RRID;Lot no.;self_conjugated;Staining;End dilution;
+49;103Rh;Dead;;Fluidigm;201103A;;;;;500;
+50;191Ir;DNA1;;Fluidigm;201192A;;;;intracellular;1000;
+51;193Ir;DNA2;;Fluidigm;201192A;;;;intracellular;1000;

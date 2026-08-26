@@ -1,0 +1,5 @@
+contact_name: Tom Veldhuizen
+contact_email: t.veldhuizen@lumc.nl
+filetype: .xlsx
+path: !expr '"data/ReCoHSI/ReCoHSI_LCMS_IgG_plate_layout.xlsx" |> (\(x) if (endsWith(here::here(), "TESTground/project")) here::here("..", x) else system.file(file.path("dummy", x), package = "beFAIR"))()'
+sheet: Sheet1

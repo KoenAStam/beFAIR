@@ -1,0 +1,250 @@
+version: 3.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: participant
+description: |
+  Master table of study participants. Each row represents one participant enrolled in a study.
+  Contains demographic information (age, sex, ethnicity, height, weight, BMI) and study-specific
+  information (study_id, study_name, studyarm_id, site, residence).
+
+  The participant_id is the primary key. It is generated internally by beFAIR using a SHA-256
+  hash of "<study_id>_<NNNN>" (4-digit zero-padded participant number), taking the first 6 hex
+  characters: format "<study_id>_<hash6>" (e.g., "CapTan_a3f2b1"). The original participant IDs
+  from the source study can be retrieved via the id_mapping table.
+
+  Participants are linked to events via event_id. Each event corresponds to a specific participant
+  at a given timepoint, and through events participants can be connected to experiments and analyses.
+variables:
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Source ID is required"
+
+  participant_id:
+    description: Anonymized unique identifier assigned to each participant. Generated internally
+      by beFAIR as "<study_id>_<hash6>" where hash6 is the first 6 characters of the SHA-256
+      hash of "<study_id>_<NNNN>" (e.g., "CapTan_a3f2b1").
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  study_id:
+    description: ID of the study or trial this participant belongs to.
+      Within one participant table all entries must have the same study_id.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Study ID is required"
+        # TODO add check if all values are equal, all study_ids should be the same within one participant table
+        # - col_vals_regex:
+        #     regex: "^\\w{5}$"  # Matches exactly 5 alphanumeric characters
+        #     label: "Study ID match exactly 5 alphanumeric characters"
+
+  study_name:
+    description: Readable name given to the study or trial.
+      Within the participant table, all entries must have the same study_name.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Study name is required"
+
+  studyarm_id:
+    description: ID of the study arm this participant belongs to (e.g., treatment, control, or
+      placebo group). Each arm corresponds to a different intervention or condition.
+      Starts with study_id (e.g., "CHSI1_arm1").
+    foreign_key: studyarm.studyarm_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: N/A=not applicable
+    validations:
+        - col_is_character: []
+
+  age:
+    description: Age of subject at enrollment; in years. Usually an integer, but decimals are
+      allowed for newborns (e.g. 0.2).
+    units: years
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+        - col_vals_between:
+            left: 0
+            right: 120
+            na_pass: true
+            label: "Age in years should fall within specified range"
+
+  sex:
+    description: Sex of the subject, recorded as one of the following options; M (Male), F (Female)
+      or NA (Not available or not specified).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: M;F
+    labels: M=Male;F=Female
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - M
+              - F
+              - NA
+            label: "Sex values should be one of the specified options"
+
+  ethnicity:
+    description: Ethnicity of the subject. This may be narrow if known (Hausa, Fang,
+      Irish, German), or vague (African, European)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  height:
+    description: Height of subject; in cm.
+    units: cm
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+        - col_vals_between:
+            left: 50
+            right: 250
+            na_pass: true
+            label: "Height in centimeter values should be within specified range"
+
+  weight:
+    description: Weight of subject; in kg.
+    units: kg
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+        - col_vals_between:
+            left: 4
+            right: 150
+            na_pass: true
+            label: "Weight in kg values should be within specified range"
+
+  bmi:
+    description: Body mass index, calculated as weight(kg)/length(m)^2.
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+        - col_vals_between:
+            left: 10
+            right: 44 # High BMI in german and gabonese trials
+            na_pass: true
+            label: "BMI values should be within specified range"
+
+  residence:
+    description: Place where the subject resides or lives.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  site:
+    description: Site where the study has been performed.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  reference_date:
+    description: Reference start date for the participant in ISO 8601 format (YYYY-MM-DD). Usually equivalent to first exposure.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_status:
+    description: Whether the participant completed the study or not.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: completed;ongoing;discontinued
+    labels: completed=Completed;ongoing=Ongoing;discontinued=Discontinued
+    validations:
+        - col_is_character: []
+        - col_vals_in_set:
+            set:
+              - "completed"
+              - "ongoing"
+              - "discontinued"
+              - NA
+            label: "Values should be one of the specified options"
+
+  discontinuation_reason:
+    description: When study_status == "discontinued, the reason for study discontinuation. For example, "informed consent withdrawn".
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  discontinuation_timepoint:
+    description: When study_status == "discontinued, the timepoint of discontinuation in days relative to start of the study.
+    units: days
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset.
+      Automatically filled during the database update. Equals the relative path of the
+      script inside the FAIRground (e.g. "\studies\CapTan\scripts\participant").
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

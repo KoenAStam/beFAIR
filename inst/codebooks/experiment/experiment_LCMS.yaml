@@ -1,0 +1,79 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2026-03-10
+name: experiment_massspec
+description: |
+  Extension of the experiment table for LC-MS (liquid chromatography–mass spectrometry) experiments.
+  Contains mass spectrometry-specific metadata such as enzyme, purification method, antigen,
+  column platform, sample preparation, and ionization method. Each row can be linked back to
+  the main experiment table via experiment_id.
+variables:
+  enzyme:
+    description: Enzyme used to digest proteins prior to mass spectrometry analysis (e.g., trypsin).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  purification:
+    description: Whether a purification step was performed before analysis.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  purification_method:
+    description: Method used to purify the sample prior to mass spectrometry (e.g., immunoprecipitation).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  antigen:
+    description: Antigen, if the experiment was antigen specific, else NA
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  platform:
+    description: Column type and chemistry used for the chromatographic separation (e.g., C18 reverse-phase).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  sample_prepartion:
+    description: Sample preparation protocol applied (e.g., trypsin digest, reduction and alkylation).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  ionization_method:
+    description: Ionization method used in the mass spectrometer (e.g., ESI, MALDI).
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []

@@ -1,0 +1,147 @@
+version: 2.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: LCMS_layout
+description: |
+  Plate layout for LC-MS glycoprofiling experiments. Each row defines one well on one plate,
+  specifying whether it contains a test sample, blank, or control, along with the participant
+  linkage (source_id → event_id) and the raw data file name. Linked to the experiment table
+  via experiment_id.
+variables:
+  experiment_id:
+    description: Experiment ID; foreign key
+    foreign_key: experiment.experiment_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+
+  plate_id:
+    description: unique plate identifier within the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+        label: "plate ID is required"
+
+  plate_row:
+    description: row letter on the plate, annotated as a letter (A, B, C, ...)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  plate_col:
+    description: column number on the plate, annotated as a number
+    units: ~
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  well_id:
+    description: unique well identifier within the plate. combination of the row and column e.g. A1, B6, D12 etc..
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  file_name:
+    description: Raw data file location
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: ID given to the study or trial for this source id; foreign key to study.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Timepoint in days relative to start of the study.
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: ID given to the participant; foreign key. Automatically filled in.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Identifier for the event (sample). Consist of participant id and timepoint in days. Automatically filled in.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  test_type:
+    description: Type of sample used in the assay. 'test' stands for test samples, 'blank' are the wells that are kept empty, and control.
+    type: character
+    type_sql: VARCHAR(255)
+    categories: test;blank;stdcurve
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_in_set:
+          set:
+            - test
+            - blank
+            - control
+            - NA
+
+  script_id:
+    description: Identifier of the source script that produced this dataset. Automatically filled during the database update. Equals the relative path of the script inside the FAIRground.
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

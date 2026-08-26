@@ -1,0 +1,96 @@
+version: 1.0
+authors: K.A. Stam; F. de Weijer
+created_at: 2026-05-12
+updated_at: 2026-05-12
+name: table_project
+description: |
+  Internal registry table tracking all pillars (studies, experiments, analyses)
+  registered in the FAIRground. Each row represents one pillar, identified
+  by its short ID from meta.yaml (study_id, experiment_id, or analysis_id).
+  This table is maintained automatically during databaseUpdate() and is not
+  intended to be populated manually.
+variables:
+  project_id:
+    description: Unique identifier of the pillar, equal to its short ID in meta.yaml.
+      For studies this is the 5-character study_id (e.g. "CHSI1"). For experiments
+      and analyses this is the 6-character hex ID (e.g. "cd881d").
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "A project id is required"
+
+  project_name:
+    description: The folder name of the pillar, equal to the directory name under
+      studies/, experiments/, or analyses/ (e.g. "CoHSI1", "CoHSI1_CyTOF_exvivo").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  pillar:
+    description: The pillar category this project belongs to.
+    units: ~
+    type: character
+    type_sql: VARCHAR(50)
+    categories: studies;experiments;analyses
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  folder_hash:
+    description: MD5 hash of the sorted concatenation of individual MD5 hashes for
+      all .R files in the pillar's scripts/ subdirectory. Changes whenever any
+      script is added, removed, or modified. NULL when the scripts/ folder is empty
+      or does not exist.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  up_to_date:
+    description: Flag indicating whether this pillar is considered up-to-date with
+      the current state of the database (1) or requires review (0). Set to 0
+      automatically when the folder_hash changes or when any declared dependency
+      script has queued_for_update = 1 in table_script. Set back to 1 manually by
+      a data steward after review.
+    units: ~
+    type: numeric
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  created_at:
+    description: ISO 8601 date (YYYY-MM-DD) when this project row was first inserted
+      into table_project.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  updated_at:
+    description: ISO 8601 date (YYYY-MM-DD) of the last update to this project row,
+      refreshed on every databasePrepareProjects() run.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []

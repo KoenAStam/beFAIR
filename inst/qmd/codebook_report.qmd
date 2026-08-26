@@ -1,0 +1,44 @@
+---
+title: "Table Report"
+date: "`r Sys.Date()`"
+format: html
+params:
+  codebookName: "participant_basemalvac"
+  serverName: "LUMC_sql_64"
+  dbName: "LUCID_FAIRPOINT_TEST"
+---
+
+
+```{r, echo=F, message=F}
+library(dplyr)
+## codebook
+codebook <- beFAIR::codebookRead(codebook_name=codebook_name)$variables
+
+variables <- names(codebook)
+
+## db connection and data
+server_name <-  Sys.getenv("SQL_SERVER_NAME") # place the sql server name in .Renviron
+#server_name <-  "FAIRPOINT" # place the sql server name in .Renviron
+db_name <- "LUCID_FAIRPOINT_TEST"
+con <- DBI::dbConnect(odbc::odbc(), 
+                dsn = params$serverName, 
+                 database = params$dbName)
+tableData <- DBI::dbGetQuery(con, paste0("SELECT * FROM ", params$codebookName))
+```
+
+
+```{r, results="asis", echo=F}
+for(var in variables){
+  if(var == "study_id"){next}
+  cat("####", var, "\n")
+  variable <- codebook[[var]]
+  cat(variable$description, "<br><br>")
+  cat("<i>units:</i>", variable$units, "<br>")
+  cat("<i>labels:</i>", variable$labels, "<br>")
+  beFAIR::tableVariableByStudy(var, tableData, params$codebookName) %>% 
+    gt::as_raw_html() %>% 
+    cat()
+}
+```
+
+

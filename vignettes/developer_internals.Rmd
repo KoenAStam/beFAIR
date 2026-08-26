@@ -1,0 +1,479 @@
+---
+title: "Developer internals: databaseUpdate() and the registry tables"
+author: "K.A. Stam"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Developer internals: databaseUpdate() and the registry tables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+```{r insert-icons, echo=FALSE, eval=TRUE}
+find_img <- function(name) {
+  candidates <- c(file.path("images", name),
+                  file.path("vignettes", "images", name))
+  candidates[file.exists(candidates)][1]
+}
+uri_codebook  <- knitr::image_uri(find_img("icon_codebook.svg"))
+uri_etlscript <- knitr::image_uri(find_img("icon_ETLscript.svg"))
+
+htmltools::tags$script(htmltools::HTML(sprintf('
+document.addEventListener("DOMContentLoaded", function() {
+  var iconMap = {
+    "table_codebook": "%s",
+    "table_script":   "%s"
+  };
+  document.querySelectorAll("h3").forEach(function(h3) {
+    var code = h3.querySelector("code");
+    if (code && iconMap[code.textContent]) {
+      var img = document.createElement("img");
+      img.src = iconMap[code.textContent];
+      img.width = 35;
+      img.style.verticalAlign = "middle";
+      img.style.marginRight = "0.4rem";
+      h3.insertBefore(img, h3.firstChild);
+    }
+  });
+});
+', uri_codebook, uri_etlscript)))
+```
+
+This guide explains how beFAIR manages its database internally. It covers
+the two registry tables that track schema state and ETL script history, and
+walks through every function called during `databaseUpdate()`. Read this if
+you need to understand, debug, or extend the system.
+
+---
+
+## 1. The registry tables
+
+beFAIR uses two permanent registry tables to coordinate all database
+operations. They are created once by `databaseInitialize()` and are never
+dropped or truncated by the ETL cycle.
+
+### `table_codebook`
+
+One row per codebook in the package. Tracks the canonical schema definition
+and is the reference point for version comparisons.
+
+| Column | SQL type | Purpose |
+|---|---|---|
+| `codebook_id` | VARCHAR | Relative path key, e.g. `study/participant`; custom codebooks use `custom/study/my_assay` |
+| `codebook_name` | VARCHAR | Matching database table name, e.g. `participant` |
+| `codebook_version` | VARCHAR | SemVer-style string, e.g. `"2.1"` |
+| `authors` | VARCHAR | Codebook author(s) |
+| `created_at` | VARCHAR | ISO-8601 creation date |
+| `updated_at` | VARCHAR | ISO-8601 last-modified date |
+| `n_parameters` | INT | Number of variables in the codebook |
+| `codebook_origin` | VARCHAR | `"beFAIR"` for built-in package codebooks; the project directory basename (e.g. `"MyStudy2024"`) for custom codebooks |
+
+**Version semantics.** Codebook versions are interpreted as `major.minor`
+numeric pairs:
+
+- **Major bump** (e.g. `1.x → 2.x`): the associated data table is **dropped
+  and recreated**; all data in that table is lost. Use this only when the
+  schema is incompatible with existing data.
+- **Minor bump** (e.g. `1.1 → 1.2`): only the `table_codebook` metadata row
+  is updated; the data table and its contents are untouched. Use this for
+  description edits, adding optional fields, or other non-breaking changes.
+  Note that all associated ETL scripts will be **queued for a re-run.**
+
+### `table_script`
+
+One row per script registered with the system. Tracks what was run, when,
+and whether the output was valid. This includes some flags for *TODO's* and
+*warnings* in the ETL script.
+
+| Column | SQL type | Purpose |
+|---|---|---|
+| `script_id` | VARCHAR | Relative file path, e.g. `studies/CHHIL/scripts/participant.R`; for external delivery this is the retrieval script, e.g. `analyses/myAnalysis/scripts/retrieve_myAnalysis.R` |
+| `script_hash` | VARCHAR | MD5 of the script file; **change triggers re-run** |
+| `codebook_name` | VARCHAR | Target table for this script; `NA` for external retrieval scripts (they load multiple tables) |
+| `codebook_version` | VARCHAR | Codebook version at last run; **drift triggers re-run** (internal scripts only) |
+| `authors` | VARCHAR | Author(s) from script metadata |
+| `created_at` | VARCHAR | Date first added to the registry |
+| `updated_at` | VARCHAR | Date of last successful run |
+| `run_time` | DECIMAL | Execution time in seconds |
+| `flag_TODO` | INT | Count of `#TODO` comments found in the script |
+| `flag_WARN` | INT | Count of warnings captured during execution |
+
+### Querying the registry tables
+
+```{r query-registry}
+FAIRgroundConnect("LUCID_FAIRPOINT")
+con <- FAIRgroundConnection()
+
+DBI::dbReadTable(con, "table_codebook")
+DBI::dbReadTable(con, "table_script")
+```
+
+You can also run these during a live session to inspect state mid-update when
+debugging.
+
+---
+
+## 2. `databaseUpdate()` — the orchestrator
+
+`databaseUpdate()` coordinates a complete ETL cycle.
+Its high-level call sequence is:
+
+<pre>
+databaseUpdate()
+├── FAIRgroundConnection()           # resolve default connection
+├── <a href="#single-user-lock">setSingleUser()</a>                 # lock DB to exclusive mode (MSSQL only)
+├── on.exit:
+│   ├── <a href="#on-exit-guarantee">setMultiUser()</a>              # restore multi-user mode
+│   └── <a href="#on-exit-guarantee">FAIRgroundDisconnect()</a>       # close connection
+├── <a href="#prepare-codebooks">databasePrepareCodebooks()</a>      # sync codebook schema → DB
+├── <a href="#prepare-scripts">databasePrepareScripts()</a>        # discover scripts needing (re)run
+├── for each script:
+│   ├── <a href="#remove-entries">sqlRemoveEntries()</a>          # delete old rows written by this script
+│   ├── <a href="#source-script">sourceScript()</a>              # execute ETL script, get databook
+│   ├── <a href="#validation-gate">[validation gate]</a>           # checks databook$validation$status
+│   └── <a href="#prepare-data">databasePrepareData()</a>       # upload data & update table_script
+├── <a href="#post-loop">databaseUpdateOverview()</a>        # rebuilds study, experiment and analysis table
+└── <a href="#post-loop">databaseUpdatePublications()</a>    # rebuild publications table
+</pre>
+
+### Single-user lock (MSSQL) {#single-user-lock}
+
+When connecting to a Microsoft SQL Server database, `databaseUpdate()` calls
+`setSingleUser()` immediately after establishing the connection. This
+acquires an exclusive lock on the database, preventing concurrent writes
+from other sessions during the ETL cycle. The lock is always released by
+`setMultiUser()` in an `on.exit()` handler — even if the function stops
+early due to an error.
+
+SQLite connections do not support single-user mode; `setSingleUser()` and
+`setMultiUser()` are no-ops for that backend.
+
+### `on.exit()` cleanup guarantee {#on-exit-guarantee}
+
+The `on.exit()` block (with `add = TRUE`) runs unconditionally when
+`databaseUpdate()` exits, regardless of whether it completes normally or
+throws an error. It restores multi-user mode and closes the connection.
+This means you never need to call `FAIRgroundDisconnect()` manually after
+`databaseUpdate()`.
+
+### Logging
+
+Pass `enable_logging = TRUE` to write a JSON log for the entire update cycle:
+
+```{r enable-logging}
+FAIRgroundConnect("LUCID_FAIRPOINT")
+databaseUpdate(enable_logging = TRUE)
+```
+
+Log files are written to `logs/files/<timestamp>.json` (e.g.
+`logs/files/2024-03-15_09-30-00.json`). Each log entry is a JSON object with
+the severity level, timestamp, message, and any named fields passed by the
+caller.
+
+To read a log after a run:
+
+```{r read-log}
+library(jsonlite)
+
+log_file <- tail(list.files("logs/files", full.names = TRUE), 1)
+logs <- stream_in(file(log_file))
+```
+
+See [Section 5](#logging) for more detail on the logger setup.
+
+---
+
+## 3. Step-by-step breakdown
+
+### 3.1 `databasePrepareCodebooks()` {#prepare-codebooks}
+
+Synchronizes the YAML codebook definitions in the package with `table_codebook`
+and the actual data tables in the database.
+
+**Steps:**
+
+1. Read current `table_codebook` from the database.
+2. **Migration check**: if the `codebook_origin` column is absent (existing
+   databases pre-v0.65), execute:
+   ```sql
+   ALTER TABLE table_codebook ADD COLUMN codebook_origin VARCHAR(255);
+   UPDATE table_codebook SET codebook_origin = 'beFAIR';
+   ```
+3. Build the expected codebook table from package YAMLs **and** any custom
+   codebooks in `codebooks/` via `codebookToTable()`. Each row carries a
+   `codebook_origin` value: `"beFAIR"` for built-in codebooks, or the
+   project directory basename for custom ones.
+5. Loop over each codebook entry and classify it:
+
+```
+For each codebook (package or custom):
+│
+├── Not in table_codebook?
+│   └── NEW → sqlGenerateTable() + sqlPushTable() into table_codebook
+│             (row includes codebook_origin)
+│
+└── Already in table_codebook:
+    ├── major version increased?
+    │   └── MAJOR BUMP → DROP TABLE + sqlGenerateTable()
+    │                  → DELETE old row + sqlPushTable() new row
+    │                  ⚠ All data in this table is lost
+    │
+    ├── minor version increased?
+    │   └── MINOR BUMP → UPDATE table_codebook metadata only
+    │                   (version, authors, updated_at, n_parameters)
+    │
+    └── version unchanged?
+        └── No action
+```
+
+All detected changes are logged via the beFAIR logger.
+
+### 3.2 `databasePrepareScripts()` {#prepare-scripts}
+
+Discovers which scripts need to be (re)run and whether each uses internal
+or external delivery.
+
+**Steps:**
+
+1. Read `table_script` from the database.
+2. Read `table_codebook` to get current codebook versions.
+3. Scan `studies/*/scripts/`, `experiments/*/scripts/`, and
+   `analyses/*/scripts/` for `.R` files.
+4. Compute the MD5 hash of the script file.
+5. Classify each script:
+   - **New**: path not in `table_script` → insert a placeholder row. Only
+     inserted if the inferred `codebook_name` (from the filename) exists in
+     `table_codebook`; otherwise log an error and skip.
+   - **Hash changed**: file was edited since the last run.
+   - **Codebook version drifted**: `table_script.codebook_version` is behind
+     `table_codebook.codebook_version`.
+   - **Up to date**: no action.
+6. **Suspended scripts**: if a filename starts with `_` (e.g.
+   `_participant.R`), the script is skipped entirely. The function checks
+   whether the corresponding `script_id` (without the underscore) has
+   existing rows in the database and logs a warning if so. This lets
+   maintainers safely disable a script without losing the audit trail.
+7. Return a data frame of scripts to run with columns `script_id`,
+   `codebook_name`, and `script_hash`, ordered by dependency:
+   `id_mapping → studyarm → studydesign → participant → event`, then
+   experiments, then analyses.
+
+### 3.3 Per-script loop
+
+`databaseUpdate()` iterates over the data frame returned by
+`databasePrepareScripts()` and runs the standard four-step ETL flow for
+each script.
+
+---
+
+##### 3.3.1 `sqlRemoveEntries()` {#remove-entries}
+
+Before re-running a script, its previously uploaded rows are deleted:
+
+```sql
+DELETE FROM <codebook_name> WHERE script_id = '<script_id>'
+```
+
+This ensures that the re-run starts with a clean slate and there are no
+duplicate or stale rows from a previous version of the script.
+
+##### 3.3.2 `sourceScript()` {#source-script}
+
+Executes the ETL script and returns a `databook` object.
+
+- The script runs in an **isolated environment** (`new.env()`) so it cannot
+  accidentally read or overwrite variables in the calling session.
+- The active DBI connection (`con`) is injected into this environment as the
+  only external dependency.
+- Before execution, all `#TODO` comments in the source text are counted
+  (`flag_TODO`).
+- During execution, R warnings are intercepted and counted (`flag_WARN`);
+  messages are muffled to suppress `pointblank` output.
+- Execution time is measured with `Sys.time()`.
+- If the script throws an error, `sourceScript()` logs it and returns `NULL`;
+  the main loop skips to the next script.
+
+**The `databook` contract.** Every ETL script must produce a named list
+called `databook` with these fields:
+
+| Field | Content |
+|---|---|
+| `$data` | A data frame with the rows to upload |
+| `$codebook` | The full codebook list object |
+| `$codebook_name` | Character; target table name |
+| `$codebook_version` | Character; version string |
+| `$validation` | Output of `validateDataByCodebook()` |
+| `$run_time` | Numeric; execution time in seconds (added by `sourceScript()`) |
+| `$flag_TODO` | Integer; `#TODO` count (added by `sourceScript()`) |
+| `$flag_WARN` | Integer; warning count (added by `sourceScript()`) |
+
+`codebookToEntries(cb_name, nrow = N)` creates the correctly-typed empty
+`$data` skeleton. Scripts should build their data in this frame to guarantee
+column types match the database schema.
+
+A minimal ETL script skeleton looks like this:
+
+```{r etl-skeleton}
+# --- Setup ---
+databook <- codebookToEntries("participant", nrow = 100)
+
+# --- Fill data ---
+databook$data$source_id   <- raw_data$subject_id
+databook$data$study_id    <- "MYST1"
+databook$data$age         <- raw_data$age_years
+# ...
+
+# --- Validate ---
+databook$validation <- validateDataByCodebook(databook)
+
+# --- Clean up (required) ---
+rm(list = setdiff(ls(), c("databook")))
+```
+
+The final `rm()` call is required. `sourceScript()` reads `databook` from
+the script's local environment after `source()` returns; leaving other
+variables behind does not cause errors but wastes memory.
+
+##### 3.3.3 Validation gate {#validation-gate}
+
+`databaseUpdate()` checks `databook$validation$status`:
+
+- `1` (pass) → proceed to `databasePrepareData()`
+- `0` (fail) → log the failure, skip upload, continue with the next script
+
+`validateDataByCodebook()` uses the `pointblank` package to apply the
+validation rules in the codebook YAML to `databook$data`. It also calls
+`checkSourceIdExist()` for any table that has a `source_id` column (except
+`id_mapping` itself), which confirms that every non-reserved `source_id`
+value exists in the `id_mapping` table.
+
+**Reserved `source_id` values** — `BLANK`, `STD`, `NEG_CTRL`, `POS_CTRL`,
+`CTRL`, `BLANK_STD`, `SAMPLE_STD` — bypass the `id_mapping` lookup. These
+represent control and blank samples that do not correspond to real
+participants.
+
+##### 3.3.4 `databasePrepareData()` {#prepare-data}
+
+Transforms the validated data and uploads it to the database, then updates
+`table_script`.
+
+**For `id_mapping` scripts:**
+
+1. Call `addParticipantIds()` to generate a deterministic `participant_id`
+   for each row. The ID is computed as the first 6 hex characters of the
+   SHA-256 hash of the string `"<study_id>_<NNNN>"` (4-digit zero-padded
+   `participant_nr`), yielding a value like `"MYST1_a3f9b2"`.
+2. Add the `script_id` column.
+3. Upload via `sqlPushTable()`.
+
+**For all other tables:**
+
+1. If `source_id` is present: left-join against the `id_mapping` table to
+   attach `participant_id`. Reserved IDs receive their own value as
+   `participant_id` (e.g. `participant_id = "BLANK"`).
+2. If both `event_id` and `timepoint` are present: construct
+   `event_id = paste0(participant_id, "_", sprintf("%04d", timepoint))`.
+   Reserved IDs get `event_id = NA`.
+3. Add the `script_id` column.
+4. Upload via `sqlPushTable()`.
+
+After a successful upload, `updateTableScript()` updates the `table_script`
+row for this script with the current MD5 hash, codebook version,
+`updated_at` timestamp, `run_time`, `flag_TODO`, and `flag_WARN`.
+
+### 3.4 Post-loop: `databaseUpdateOverview()` and `databaseUpdatePublications()` {#post-loop}
+
+After all scripts have been processed, two aggregate tables are always
+rebuilt unconditionally — even if no individual scripts were updated:
+
+- `databaseUpdateOverview()` rebuilds the `study`, `experiment`, and
+  `analysis` aggregate tables.
+- `databaseUpdatePublications()` rebuilds the `publications` table.
+
+Because these always run, they reflect the current state of the database
+regardless of which scripts ran in this cycle.
+
+---
+
+## 4. Supporting SQL helpers
+
+### `sqlGenerateTable(cb_name)`
+
+Reads the codebook YAML for `cb_name`, builds a `CREATE TABLE` DDL string
+from the `type_sql` fields of each variable, and executes it. `DECIMAL`
+columns are always created as `DECIMAL(38, 18)` to preserve precision.
+
+Example of the generated DDL for a simplified codebook:
+
+```sql
+CREATE TABLE participant (
+  script_id VARCHAR,
+  source_id VARCHAR,
+  study_id VARCHAR,
+  participant_nr INT,
+  participant_id VARCHAR,
+  age DECIMAL(38, 18),
+  sex VARCHAR
+);
+```
+
+### `sqlPushTable(data, table_name, script_id)`
+
+Wraps `DBI::dbWriteTable(..., append = TRUE)`. On success, logs the number
+of rows written. On failure, logs the error message and returns `FALSE`.
+
+### `sqlRemoveEntries()`
+
+Issues a parameterized `DELETE` statement for the given `codebook_name` and
+`script_id`. See [Section 3.3.1](#331-sqlremoveentries) above.
+
+---
+
+## 5. Logging {#logging}
+
+beFAIR uses the `lgr` package with a named logger hierarchy. All internal
+functions obtain the logger via:
+
+```{r get-logger}
+lg <- lgr::get_logger("beFAIR")
+```
+
+This creates a child logger under the root `lgr` logger, allowing the
+threshold and appenders to be configured independently.
+
+### `.initLogger()` and `.disableLogger()`
+
+`.initLogger()` is called by `databaseUpdate()` when `enable_logging = TRUE`:
+
+- Clears any existing appenders on the `"beFAIR"` logger.
+- Sets the threshold to `"info"`.
+- Adds a `lgr::AppenderFile` with `lgr::LayoutJson` that writes to
+  `logs/files/<YYYY-MM-DD_HH-MM-SS>.json`.
+
+`.disableLogger()` removes all appenders (flushing pending writes to disk)
+and is called in the `on.exit()` handler at the end of `databaseUpdate()`.
+
+### Reading log files
+
+```{r read-logs}
+library(jsonlite)
+
+# Find the most recent log file
+log_file <- tail(list.files("logs/files", full.names = TRUE, pattern = "\\.json$"), 1)
+
+# Stream-parse the JSON log (one object per line)
+logs <- jsonlite::stream_in(file(log_file), verbose = FALSE)
+
+# Filter to warnings and errors only
+logs[logs$level >= 300, c("timestamp", "level_name", "msg", "script_id")]
+```
+
+Log levels follow the `lgr` convention: `info = 200`, `warn = 300`,
+`error = 400`, `fatal = 500`.

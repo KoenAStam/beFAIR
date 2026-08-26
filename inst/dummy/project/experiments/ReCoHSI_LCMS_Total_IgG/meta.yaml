@@ -1,0 +1,21 @@
+version: .na
+experiment_id: Eae5e0d
+name: ReCoHSI_LCMS_Total_IgG
+type: LCMS
+study_ids: RCHSI
+date: .na
+sample_type: serum
+location_data: path_to_data
+location_protocol: path_to_protocol
+stimulation: .na
+stimulation_descriptive: .na
+operator: Tom Veldhuizen
+machine: LC-MS # + .. 
+enzyme: .na
+purification: .na
+purification_method: .na
+antigen: ~ # not specific
+platform: .na
+sample_prepartion: .na
+ionization_method: .na
+delivery_mode: internal

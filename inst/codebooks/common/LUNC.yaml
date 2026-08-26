@@ -1,0 +1,58 @@
+version: 1.0
+authors: K. Stam
+created_at: 2026-04-17
+name: LUNC
+description: |
+  LUCID Nomenclature (LUNC) reference table.
+  Maps FCS parameter descriptions used at LUMC to standardised symbols
+  from HCDM, HGNC, or internal department convention.
+
+variables:
+  fcs_parameters_desc:
+    description: Parameter description as it appears in FCS files (e.g. "CD3").
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "FCS parameter description is required"
+      - rows_distinct:
+          label: "FCS parameter descriptions must be unique"
+
+  source:
+    description: Information on the origin of this entry (e.g. "flow cytometer", "manual curation").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+
+  symbol:
+    description: Standardised symbol chosen as the canonical label, preferably from HCDM or HGNC.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []
+      - col_vals_not_null:
+          label: "Symbol is required"
+
+  symbol_database:
+    description: |
+      Database from which the symbol was sourced (e.g. "HCDM", "HGNC", "department").
+      "department" means the label was defined internally.
+    units: ~
+    type: character
+    type_sql: VARCHAR(100)
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_character: []

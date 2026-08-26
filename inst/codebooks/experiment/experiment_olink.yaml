@@ -1,0 +1,60 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: experiment_olink
+description: |
+  Extension of the experiment table for Olink experiments. Contains Olink-specific metadata
+  such as product type, panel, panel version, plate ID, and readout. Each row can be linked
+  back to the main experiment table via experiment_id.
+variables:
+  product:
+    description: Olink product type (e.g., 'Explore', 'Target', 'Focus').
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  panel:
+    description: Olink panel name (e.g., 'Inflammation', 'Oncology II').
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  panel_version:
+    description: Version number of the Olink panel used in this experiment.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  plate_id:
+    description: Unique plate identifier within the experiment.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  readout:
+    description: Readout type or unit (e.g., 'NPX', 'pg/mL').
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+

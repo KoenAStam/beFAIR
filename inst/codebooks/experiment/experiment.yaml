@@ -1,0 +1,160 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: experiment
+description: |
+  Master table of all experiments conducted. Each experiment has a unique identifier, a name,
+  and a type (e.g., CyTOF, GlycanArray, ELISA, Luminex). Each experiment is linked to one or
+  more studies via the study_ids column (the source of the samples). The table also contains
+  metadata such as the date, sample type, and locations of raw data and lab protocols.
+variables:
+  experiment_id:
+    description: Unique identifier for the experiment, in the format 'E' followed by an additional letter and a 4-character code (e.g., 'EC0001').
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: [] #list of empty args
+        - col_vals_not_null:
+            label: "Experiment ID is required"
+        - rows_distinct:
+            label: "Experiment IDs are unique"
+
+  name:
+    description: Readable name given to the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  type:
+    description: What type of experiment was performed.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: CyTOF; Array; ELISA; Luminex; Aurora; Olink
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Experiment type is required"
+        - col_vals_in_set:
+            set:
+              - CyTOF
+              - Array
+              - ELISA
+              - Luminex
+              - Aurora
+              - Olink
+
+  study_ids:
+    description: Semicolon-separated list of study IDs whose samples were used in this experiment (e.g., 'CHSI1;CHSI2').
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  date:
+    description: Date of the experiment YYYY-MM-DD (ISO 8601)
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Date is required"
+
+  sample_type:
+    description: On what type of samples the experiment was performed
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: pbmc; plasma; wholeblood; urine; other # check plasma vs serum
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  location_data:
+    description: Location of the raw data folder
+    units: ~
+    type: character
+    type_sql: VARCHAR(1000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  location_protocol:
+    description: location of the lab journal # depends on person
+    units: ~
+    type: character
+    type_sql: VARCHAR(1000)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  stimulation:
+    description: |
+      Stimulation conditions. Different conditions are separated by
+      commas, while stimulations applied together or in sequence are joined by an underscore.
+      If no stimulation is applied, use "none".
+      Examples; "LPS, aCD3_aCD28", "none", "uRBC, iRBC", or "aCD3_aCD28_PMA_I".
+      Set; none, uRBC, iRBC, SEB, aCD3, aCD28, PMA, I, med, ssRNA40, LPS, YFvaccine
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  stimulation_descriptive:
+    description: |
+      Structured description of the stimulation conditions. Different conditions are
+      separated by commas, while stimulations belonging together are joined by an underscore.
+      They are joined to their duration also by an underscore.  Sequential addition is indicated by _then_.
+      Removal of the previous stimulation(s) by washing is indicated by _wash_.
+      Stimulation names should be abbreviated and written in camelCase. If no stimulation is applied, use NA.
+      Examples; "none", "iRBC_6h", "inhibitor_30m_then_stimulation_1h", "aCD3_aCD28_72h_wash_then_PMA_I_4h"
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  operator:
+    description: Name of the person who performed the experiment
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  machine:
+    description: Description of the machine
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_vals_in_set:
+            set:
+              - Aurora 3L-1
+              - Aurora 3L-2
+              - Aurora 5L-1
+              - Aurora 5L-2
+              - CyTOF1
+              - CyTOF2
+              - Helios
+              - CyTOF XT
+              - NA

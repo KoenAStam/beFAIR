@@ -1,0 +1,21 @@
+analysis_id: A42b5e1
+name: ReCoHSI_array_2023
+type: Array
+study_ids: RCHSI
+experiment_ids: E2b852c
+analysis_ids: .na
+table_dependecies: .na
+publication_pmid: ~
+description: ~
+project_location: .na
+source_ready: .na
+git_repo: .na
+owner: .na
+remove_flagged: yes
+floor_fi_150: yes
+average_of_triplet: yes
+blank_subtracted: yes
+set_negative_to_zero: yes
+dependencies: []
+
+

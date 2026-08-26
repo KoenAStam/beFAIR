@@ -1,0 +1,68 @@
+version: 1.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: studyarm
+description: |
+  Table defining the study arms (intervention groups) within each study. Each row represents
+  a single arm, describing the intervention or condition assigned to a group of participants
+  (e.g., vaccine group, placebo group, different dose cohort). Linked to the study table via
+  study_id and referenced by the participant table via studyarm_id.
+variables:
+  studyarm_id:
+    description: Unique identifier for the study arm. Typically prefixed with the study_id
+      (e.g., "EGSV2_arm1a").
+    primary_key: true
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Studyarm ID is required"
+
+  study_id:
+    description: Identifier of the study this arm belongs to.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+        - col_vals_not_null:
+            label: "Study ID is required"
+
+  studyarm_name:
+    description: Human-readable name for the study arm (e.g., "PfSPZ vaccine 27000 sporozoites").
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  studyarm_description:
+    description: Detailed description of the study arm, including age group, regimen,
+      compound, dose, and any other relevant information.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset.
+      Automatically filled during the database update. Equals the relative path of the
+      script inside the FAIRground (e.g. "\studies\CapTan\scripts\studyarm").
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~

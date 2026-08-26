@@ -1,0 +1,139 @@
+version: 3.1
+authors: K.A. Stam; F. de Weijer
+created_at: 2025-11-19
+name: sample
+description: |
+  Table of samples stored, linked to specific events via event_id.
+  For each event, records the number of vials available for different sample types
+  (serum, plasma, PBMCs, urine, paxgene, whole blood). Each row corresponds to one event.
+variables:
+  source_id:
+    description: Original ID given to the participant during the study.
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  study_id:
+    description: ID given to the study or trial for this source id; foreign key to study.
+    foreign_key: study.study_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  timepoint:
+    description: Timepoint in days relative to start of the study.
+    units: days
+    type: integer
+    type_sql: INT
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  participant_id:
+    description: ID given to the participant; foreign key. Automatically filled in.
+    foreign_key: participant.participant_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  event_id:
+    description: Unique identifier for the event (participant × timepoint). Automatically filled
+      during the database update from source_id, study_id, and timepoint.
+    foreign_key: event.event_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+
+  serum_number_of_vials:
+    description: Vials of serum that are in storage
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  plasma_number_of_vials:
+    description: Vials of plasma that are in storage
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  pbmc_timepoint_on_vials:
+    description: Timepoint on the pbmc vial
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_character: []
+
+  pbmc_number_of_vials:
+    description: Vials of PBMCs that are in storage
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  urine_number_of_vials:
+    description: Vials of urine that are in storage
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  paxgene_number_of_vials:
+    description: Vials of paxgene that are in storage
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  wholeblood_number_of_vials:
+    description: Vials of wholeblood that are in storage
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+        - col_is_numeric: []
+
+  script_id:
+    description: Identifier of the source script that produced this dataset.
+      Automatically filled during the database update. Equals the relative path of the
+      script inside the FAIRground (e.g. "\studies\CapTan\scripts\sample").
+    foreign_key: table_script.script_id
+    units: ~
+    type: character
+    type_sql: VARCHAR(255)
+    categories: ~
+    labels: ~
