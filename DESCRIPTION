@@ -21,7 +21,7 @@ Description:
     clinical studies using standardized codebooks, beFAIR supports
     reproducible data ingestion and promotes FAIR (Findable,
     Accessible, Interoperable, Reusable) data practices.
-License: GPL-3
+License: Apache License (>= 2)
 URL: https://data.hypovax.org/beFAIR
 Encoding: UTF-8
 LazyData: true
