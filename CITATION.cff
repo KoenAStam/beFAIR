@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+title: "beFAIR: Codebook-Driven ETL Framework for Clinical Research Data"
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - given-names: Koen
+    family-names: Stam
+    email: k.a.stam@lumc.nl
+    affiliation: Leiden University Medical Center
+    orcid: 'https://orcid.org/0000-0003-0982-4439'
+  - given-names: Floor
+    family-names: Weijer
+    name-particle: de
+    email: f.deweijer@lumc.nl
+    affiliation: Leiden University Medical Center
+identifiers:
+  - type: url
+    value: 'https://data.hypovax.org'
+    description: >-
+      Data catalog providing an overview of data collected
+      within the HypoVax Global network
+repository-code: 'https://github.com/koenAStam/beFAIR'
+url: 'https://github.com/koenAStam/beFAIR'
+abstract: >-
+  beFAIR is an R package that provides an ETL
+  (Extract-Transform-Load) framework for clinical research
+  platforms. It creates and manages structured 'FAIRground'
+  project directories, enforces codebook-driven data schemas
+  in a SQL database, and automates the drafting, running,
+  and tracking of ETL scripts. Designed to harmonize data
+  across clinical studies using standardized codebooks,
+  beFAIR supports reproducible data ingestion and promotes
+  FAIR (Findable, Accessible, Interoperable, Reusable) data
+  practices.
+keywords:
+  - R package
+  - ETL
+  - FAIR data
+  - data harmonization
+  - codebook
+  - clinical research data
+  - research data management
+license: Apache-2.0
+version: 0.2.0
+date-released: '2026-09-28'
