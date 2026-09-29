@@ -1,4 +1,6 @@
 # beFAIR <img src="man/figures/logo.png" align="right" height="138" />
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23018363.svg)](https://doi.org/10.5281/zenodo.23018363)
+
 
 beFAIR is an R package for managing and harmonizing clinical research data following FAIR principles. It provides a codebook-driven ETL framework that links clinical studies, immunological experiments, and downstream analyses through a shared SQL database.
 
