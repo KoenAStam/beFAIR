@@ -216,7 +216,7 @@
 #' @seealso [databasePrepareCodebooks()]
 #'
 #' @keywords internal
-.sqlGenerateTable <- function(con=NULL, table_name) {
+.sqlGenerateTable <- function(con = NULL, table_name) {
   #TODO add functionality that drops the table if it already exists (log warning)
 
   lg <- lgr::get_logger("beFAIR")
@@ -224,33 +224,34 @@
 
   codebook <- codebookRead(codebook_name = table_name)$variables
 
-  sqlCreate <- paste0("CREATE TABLE ", table_name, " (\n")
-
-  for (field in names(codebook)) {
-    fieldInfo <- codebook[[field]]
-    fieldName <- field
+  sqlTypes <- vapply(codebook, function(fieldInfo) {
     sqlType <- fieldInfo$type_sql
+    if (toupper(sqlType) == "DECIMAL") "DECIMAL(38, 18)" else sqlType
+  }, character(1))
 
-    if (toupper(sqlType) == "DECIMAL") {
-      sqlType <- "DECIMAL(38, 18)"
-    }
+  fieldDefs <- paste0(
+    "  ", DBI::dbQuoteIdentifier(con, names(codebook)), " ", sqlTypes,
+    collapse = ",\n"
+  )
 
-    sqlCreate <- paste0(sqlCreate, "  ", fieldName, " ", sqlType, ",\n")
-  }
-
-  sqlCreate <- substr(sqlCreate, 1, nchar(sqlCreate) - 2)
-  sqlCreate <- paste0(sqlCreate, "\n);")
+  sqlCreate <- paste0(
+    "CREATE TABLE ", DBI::dbQuoteIdentifier(con, table_name), " (\n",
+    fieldDefs,
+    "\n);"
+  )
 
   tryCatch({
     DBI::dbExecute(con, sqlCreate)
     lg$info("Table created successfully",
             table_name = table_name,
             caller = ".sqlGenerateTable")
+    invisible(TRUE)
   }, error = function(e) {
-    lg$info("Failed to create table",
-            table_name = table_name,
-            error_message = conditionMessage(e),
-            caller = ".sqlGenerateTable")
+    lg$error("Failed to create table",
+             table_name = table_name,
+             error_message = conditionMessage(e),
+             caller = ".sqlGenerateTable")
+    invisible(FALSE)
   })
 }
 
