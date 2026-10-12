@@ -110,10 +110,10 @@ databasePrepareCodebooks <- function(con=NULL) {
                 codebook_version = ver_new_str)
 
         .sqlDropTable(con, cb_name)
-        .sqlGenerateTable(con, cb_name)
-
-        .sqlDeleteRows(con, "table_codebook", "codebook_id", cb_id)
-        .sqlPushTable(con, cb, "table_codebook")
+        if(.sqlGenerateTable(con, cb_name)){
+          .sqlDeleteRows(con, "table_codebook", "codebook_id", cb_id)
+          .sqlPushTable(con, cb, "table_codebook")
+        }
 
       } else if (diff_major == 0 & diff_minor > 0) {
         # MINOR version update
