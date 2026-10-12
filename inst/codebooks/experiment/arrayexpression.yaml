@@ -1,4 +1,4 @@
-version: 4.0
+version: 5.0
 authors: K.A. Stam; F. de Weijer
 created_at: 2025-11-19
 name: arrayexpression
@@ -134,6 +134,26 @@ variables:
 
   block:
     description: The block number on the slide, needed for corrections and substraction of the blanks
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  row:
+    description: Row number of a given spot within a block. There are 18 rows in total
+    units: ~
+    type: numeric
+    type_sql: DECIMAL
+    categories: ~
+    labels: ~
+    validations:
+      - col_is_numeric: []
+
+  column:
+    description:  Column number of a given spot within a block. There are 12 columns in total
     units: ~
     type: numeric
     type_sql: DECIMAL
