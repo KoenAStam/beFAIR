@@ -23,3 +23,11 @@ See the [getting started guide](articles/start_here.html) for an introduction, o
 - [Adding a study](articles/adding_a_study.html)
 - [Adding an experiment](articles/adding_an_experiment.html)
 - [Codebook reference](articles/codebooks_reference.html)
+
+## Funding
+
+<img src="man/figures/eu-funded.png" alt="Funded by the European Union" height="60" align="left">
+
+Funded by the European Union under the HORIZON EUROPE project WORMVACS2.0 (Grant Agreement n° 101080784).
+
+Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Health and Digital Executive Agency (HADEA). Neither the European Union nor the granting authority (HADEA) can be held responsible for them.
