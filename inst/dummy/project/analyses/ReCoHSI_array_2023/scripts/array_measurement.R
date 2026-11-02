@@ -16,7 +16,7 @@ studyID <- "RCHSI"
 
 # quick fix: get the data with source_ids (very slow fix)
 experimentEnv <- new.env()
-experimentEnv$con <- FAIRpoint::FAIRpointConnection(con)
+experimentEnv$con <- beFAIR::FAIRgroundConnection(con)
 source("experiments/ReCoHSI_array_2023/scripts/arrayexpression.R", local = experimentEnv)
 arraydata <- experimentEnv$databook$data
 # we need to pass the connection for the validation?
@@ -29,16 +29,16 @@ arraydata <- experimentEnv$databook$data
 #
 data <- arraydata %>%
   # remove flagged data
-  dplyr::filter((flags==0)|(flags==-50)) %>% 
-  
+  dplyr::filter((flags==0)|(flags==-50)) %>%
+
   # set fluorescence <150 to 150
-  mutate(fi_f_minus_b_median_cor = pmax(fi_f_minus_b_median, 150)) %>% 
-  
+  mutate(fi_f_minus_b_median_cor = pmax(fi_f_minus_b_median, 150)) %>%
+
   # calculate the average fluorescence intensity per target_id, source_id, timepoint, antibody, and block for "test" data
   dplyr::filter(test_type == "test") %>%
   group_by(target_id, source_id, timepoint, block, wavelength_name) %>%
   summarise(average_fi = mean(as.numeric(fi_f_minus_b_median_cor), na.rm = TRUE)) %>%
-  
+
   # calculate the median blank fluorescence intensity per source_id, timepoint, per block, per wavelength (for "blank" data)
   left_join(
     arraydata %>%
@@ -47,10 +47,10 @@ data <- arraydata %>%
       summarise(blank_fi = median(as.numeric(fi_f_minus_b_median), na.rm = TRUE)),
     by = c("source_id", "timepoint", "block", "wavelength_name")  # Join by source_id, timepoint, and block to add the blank_fi to the data
   ) %>%
-  
+
   # subtract the blank fluorescence intensity from the measured fluorescence intensity
   mutate(minus_blanks = average_fi - blank_fi) %>%
-  
+
   # make sure any negative values are set to 0
   mutate(final_fi = pmax(minus_blanks, 0))  # pmax sets negative values to 0
 

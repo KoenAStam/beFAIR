@@ -64,7 +64,7 @@ databaseExport <- function(
   tableList <- list()
   tableList$`_meta` <- data.frame(
     export_time = as.character(Sys.time()),
-    fairpoint_version = as.character(utils::packageVersion("beFAIR")),
+    beFAIR_version = as.character(utils::packageVersion("beFAIR")),
     r_version = R.version.string,
     stripped = stripped,
     replace_missing = replace_missing,

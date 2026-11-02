@@ -58,7 +58,7 @@ databaseUpdate <- function(enable_logging=FALSE, con=NULL) {
           sql_server = con_info$servername,
           sql_database = con_info$dbname,
           r_version = paste(R.version$major, R.version$minor, sep = "."),
-          fairpoint_version = as.character(utils::packageVersion("beFAIR")),
+          beFAIR_version = as.character(utils::packageVersion("beFAIR")),
           user = con_info$username,
           hostname = Sys.info()[["nodename"]])
 
