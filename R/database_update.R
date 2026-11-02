@@ -53,25 +53,16 @@ databaseUpdate <- function(enable_logging=FALSE, con=NULL) {
   lg$info("SQL connection established")
 
   # Start database update
+  con_info <- DBI::dbGetInfo(con)
   lg$info("Starting database update",
-          sql_server = con@info$servername,
-          sql_database = con@info$dbname,
+          sql_server = con_info$servername,
+          sql_database = con_info$dbname,
           r_version = paste(R.version$major, R.version$minor, sep = "."),
           fairpoint_version = as.character(utils::packageVersion("beFAIR")),
-          user = con@info$username,
+          user = con_info$username,
           hostname = Sys.info()[["nodename"]])
 
-  # Ensure database disconnec
   on.exit({
-    if (!is.null(con) && DBI::dbIsValid(con)) {
-
-      FAIRgroundDisconnect()
-      lg$info("SQL connection closed",
-              sql_server = con@info$servername,
-              user = con@info$username,
-              hostname = Sys.info()[["nodename"]])
-    }
-
     if (enable_logging) {
       lg$info("Database update finished")
       .disableLogger()
