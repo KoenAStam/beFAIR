@@ -101,7 +101,10 @@ startProject <- function(dir, dummy=FALSE){
     ".RData",
     ".Ruserdata",
     ".Rproj.user/",
-    ".DS_Store"
+    ".DS_Store",
+    "*.db",
+    "*.sqlite",
+    "*.sqlite3"
   ), file.path(dir, ".gitignore"))
 
   # dummy data

@@ -450,7 +450,7 @@
       script_id        = script_id
     )
 
-    DBI::dbExecute(con, query, params)
+    DBI::dbExecute(con, query, unname(params))
 
     lg$info("Succesfully updated table_script with latest version of script_id",
              script_id = script_id,
