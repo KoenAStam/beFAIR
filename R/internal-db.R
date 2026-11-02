@@ -549,3 +549,25 @@
 
   return(studyInfo)
 }
+
+# ── Path helpers ───────────────────────────────────────────────────────────────
+
+#' Resolve a dummy data path for TESTground or the installed package
+#'
+#' Walks up from the working directory looking for a folder whose path ends
+#' in `marker`. If found, returns `p` relative to that folder's parent
+#' (equivalent to the old `here::here("..", p)`). Otherwise falls back to
+#' the dummy data shipped with beFAIR.
+#'
+#' @param p Relative data path, e.g. `"data/CoHSI1/cytof barcodes"`.
+#' @param marker Path suffix identifying the project root.
+#' @return A file path (character scalar).
+.resolve_dummy_data <- function(p, marker = "TESTground/project") {
+  d <- normalizePath(getwd(), winslash = "/", mustWork = FALSE)
+  while (!endsWith(d, marker) && dirname(d) != d) d <- dirname(d)
+  if (endsWith(d, marker)) {
+    file.path(dirname(d), p)
+  } else {
+    system.file(file.path("dummy", p), package = "beFAIR")
+  }
+}
