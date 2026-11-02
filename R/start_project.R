@@ -56,11 +56,16 @@
 #'
 #' @export
 startProject <- function(dir, dummy=FALSE){
+  lg <- lgr::get_logger("beFAIR")
   srcDir <- system.file("dummy/project", package = "beFAIR")
 
   if(missing(dir)){
     stop('argument "dir" is missing, with no default')
   }
+
+  lg$info("Starting FAIRground project",
+          path  = normalizePath(dir, winslash = "/", mustWork = FALSE),
+          dummy = dummy)
 
   # folder structure
   dir.create(file.path(dir, "/studies"), recursive=TRUE)
@@ -113,6 +118,8 @@ startProject <- function(dir, dummy=FALSE){
       dir.create(d, recursive = TRUE, showWarnings = FALSE)
     }
     invisible(file.copy(from = dummyProject, to = finalPaths))
+    lg$info("Dummy project files copied", N = length(dummyProject))
   }
 
+  lg$info("FAIRground project ready", path = normalizePath(dir, winslash = "/", mustWork = FALSE))
 }
