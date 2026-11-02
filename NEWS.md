@@ -1,3 +1,15 @@
+# beFAIR 0.2.3
+
+## Bug fixes
+
+* The `startProject()` sandbox now works correctly with SQLite backends.
+* `databaseUpdate()` no longer exits automatically on connection failure; database
+  and connection info is gathered without forcing an early return.
+
+## Internal
+
+* Removed leftover internal references to the old package name.
+
 # beFAIR 0.2.0
 
 First public release.
