@@ -107,6 +107,23 @@ startProject <- function(dir, dummy=FALSE){
     "*.sqlite3"
   ), file.path(dir, ".gitignore"))
 
+  # fairground.yml — connection settings template
+  yml_lines <- c(
+    "# FAIRground connection settings",
+    "# Commit this file to share database configuration with your team.",
+    "# Do NOT store passwords here.",
+    "",
+    "connection:",
+    sprintf("  backend: sqlite                # \"sqlite\" or \"odbc\""),
+    sprintf("  path: %s.sqlite     # SQLite: path to database file (relative to this file)", projectName),
+    "  # For ODBC, replace the two lines above with:",
+    "  # backend: odbc",
+    "  # dsn: MY_DSN_NAME"
+  )
+  writeLines(yml_lines, file.path(dir, "fairground.yml"))
+  lg$info("Database connection can be configured in fairground.yml",
+          path = "fairground.yml")
+
   # dummy data
   if(dummy){
     dummyProject <- list.files(srcDir, recursive=TRUE, full.names=TRUE)
