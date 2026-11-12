@@ -13,7 +13,9 @@
 #'   matching `script_id`). The `script_id` column is always removed from the
 #'   output.
 #' @examples
+#' \dontrun{
 #' df <- collectTable(table_name = "participant")
+#' }
 #' @export
 #'
 collectTable <- function(table_name, script_id = NULL, con = NULL) {
