@@ -25,5 +25,7 @@ If a valid database connection is not supplied, a new connection is created.
 Optionally, the result can be filtered by a given \code{script_id}.
 }
 \examples{
+\dontrun{
 df <- collectTable(table_name = "participant")
+}
 }
