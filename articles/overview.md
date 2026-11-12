@@ -79,7 +79,7 @@ drafted automatically from the codebook and are tracked in a registry.
 The result is a single, queryable SQL database in which all studies,
 experiments, and analyses speak the same language.
 
-![FAIRground infographic](images/infographic.svg)
+![FAIRground infographic](images/infographic2.png)
 
 ------------------------------------------------------------------------
 

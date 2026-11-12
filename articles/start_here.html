@@ -94,7 +94,7 @@ schema</strong> with auto-generated ETL scripts. Every table in the
 database is defined by a codebook (a YAML file specifying variable
 names, types, and validation rules). Scripts are drafted automatically,
 leaving you to fill in only the study-specific data mapping logic.</p>
-<p><img src="images/infographic.svg" style="width: 100%;" alt="beFAIR infographic"></p>
+<p><img src="images/infographic2.png" style="width: 100%;" alt="beFAIR infographic"></p>
 <div class="section level3">
 <h3 id="the-three-data-pillars">The three data pillars<a class="anchor" aria-label="anchor" href="#the-three-data-pillars"></a>
 </h3>
@@ -176,33 +176,34 @@ you.</p>
 <h3 id="i-want-to-use-data-from-the-database">I want to use data from the database<a class="anchor" aria-label="anchor" href="#i-want-to-use-data-from-the-database"></a>
 </h3>
 <p>The database is already populated and you want to query or retrieve
-data. Connect to the database using <code><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect()</a></code>
-with your institutional DSN, then use standard <code>DBI</code> calls to
-read tables.</p>
+data. Connect using <code><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect()</a></code> with your DSN, then
+use standard <code>DBI</code> calls to read tables.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect</a></span><span class="op">(</span><span class="st">"LUCID_FAIRPOINT"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect</a></span><span class="op">(</span><span class="st">"MY_DSN"</span><span class="op">)</span></span>
 <span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FAIRgroundConnection.html">FAIRgroundConnection</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbReadTable.html" class="external-link">dbReadTable</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"participant"</span><span class="op">)</span></span></code></pre></div>
+<blockquote>
+<p>A <strong>DSN</strong> (Data Source Name) is an ODBC connection
+string configured by your database administrator. For local testing
+without a server, see the <a href="database_smoke_test.html">Database
+smoke test</a>.</p>
+</blockquote>
 <p>To pull all tables related to a specific study, experiment, or
 analysis ID — following relationships across all three pillars — use
 <code><a href="../reference/collectTablesById.html">collectTablesById()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/collectTablesById.html">collectTablesById</a></span><span class="op">(</span><span class="va">con</span>, id <span class="op">=</span> <span class="st">"CHSI1"</span><span class="op">)</span>   <span class="co"># returns a named list of all linked tables</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/collectTablesById.html">collectTablesById</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"CHSI1"</span><span class="op">)</span>   <span class="co"># returns a named list of all linked tables</span></span></code></pre></div>
 <p>See the <a href="database_smoke_test.html">Database smoke test</a>
-for a worked example of connecting and inspecting the available tables,
-and <a href="exploring_and_joining_data_tables.html">Exploring and
-joining data tables</a> for a guide to the available wrapper
-functions.</p>
+for a worked example of connecting and querying the database.</p>
 </div>
 <div class="section level3">
 <h3 id="i-want-to-add-data-by-writing-etl-scripts">I want to add data by writing ETL scripts<a class="anchor" aria-label="anchor" href="#i-want-to-add-data-by-writing-etl-scripts"></a>
 </h3>
 <p>A FAIRground directory already exists and you need to contribute data
 for a new study, experiment, or analysis.</p>
-<!-- Also describe how to add a specific script such as participant_basemalvac with the draftScript function. -->
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect</a></span><span class="op">(</span><span class="st">"LUCID_FAIRPOINT"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect</a></span><span class="op">(</span><span class="st">"MY_DSN"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/addStudy.html">addStudy</a></span><span class="op">(</span><span class="st">"MyStudy"</span>, study_id <span class="op">=</span> <span class="st">"MYST1"</span><span class="op">)</span>       <span class="co"># scaffolds scripts under studies/</span></span>
 <span><span class="fu"><a href="../reference/addExperiment.html">addExperiment</a></span><span class="op">(</span><span class="st">"MyStudy_CyTOF_exvivo"</span>,</span>
@@ -218,22 +219,23 @@ analysis</a> for step-by-step walkthroughs.</p>
 <h3 id="i-am-a-developer-or-database-maintainer">I am a developer or database maintainer<a class="anchor" aria-label="anchor" href="#i-am-a-developer-or-database-maintainer"></a>
 </h3>
 <p>You are responsible for keeping the database up to date — running ETL
-scripts, managing codebook versions, and onboarding new contributors. If
-you are setting up beFAIR for the first time, start with <a href="starting_a_project.html">Starting a project</a>.</p>
-<!-- Make a clear distinction between starting a project and maintaining an existing project. In two different code blocks.  -->
+scripts, managing codebook versions, and onboarding new
+contributors.</p>
+<p><strong>Day-to-day:</strong> re-run any new or changed scripts and
+reload the database:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect</a></span><span class="op">(</span><span class="st">"LUCID_FAIRPOINT"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Re-run all new or changed scripts and reload the database:</span></span>
-<span><span class="fu"><a href="../reference/databaseUpdate.html">databaseUpdate</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># First-time setup of a new database:</span></span>
-<span><span class="fu"><a href="../reference/startProject.html">startProject</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="st">"/path/to/my/project"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect</a></span><span class="op">(</span><span class="st">"MY_DSN"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/databaseUpdate.html">databaseUpdate</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><strong>First-time setup:</strong> create the project directory and
+initialize the database:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/startProject.html">startProject</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="st">"/path/to/my/project"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/FAIRgroundConnect.html">FAIRgroundConnect</a></span><span class="op">(</span><span class="st">"MY_DSN"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/databaseInitialize.html">databaseInitialize</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/databaseUpdate.html">databaseUpdate()</a></code> is the main orchestrator — it syncs
 codebook definitions, detects new or changed scripts, runs each one,
-validates the output, and loads it into the database. See the <a href="database_smoke_test.html">Database smoke test</a> for setup and
-maintenance guides, and <a href="developer_internals.html">Developer
+validates the output, and loads it into the database. Start with <a href="starting_a_project.html">Starting a project</a> for the full setup
+walkthrough, and <a href="developer_internals.html">Developer
 internals</a> for a deep dive into <code><a href="../reference/databaseUpdate.html">databaseUpdate()</a></code> and the
 registry tables.</p>
 <hr>
@@ -263,8 +265,8 @@ registry tables.</p>
 </tr>
 <tr class="even">
 <td><a href="database_smoke_test.html">Database smoke test</a></td>
-<td>Connect via DSN or SQLite, initialize, and verify the registry
-tables</td>
+<td>Run the full ETL pipeline end-to-end in under a minute using an
+in-memory SQLite database and built-in dummy data</td>
 </tr>
 <tr class="odd">
 <td><a href="developer_internals.html">Developer internals</a></td>
@@ -288,12 +290,18 @@ tables</td>
 <th>Guide</th>
 <th>What you will learn</th>
 </tr></thead>
-<tbody><tr class="odd">
-<td><a href="exploring_and_joining_data_tables.html">Exploring and
-joining data tables</a></td>
+<tbody>
+<tr class="odd">
+<td><a href="database_smoke_test.html">Database smoke test</a></td>
+<td>Connect, run the ETL pipeline, and query a working database</td>
+</tr>
+<tr class="even">
+<td>Exploring and joining data tables <em>(coming soon)</em>
+</td>
 <td>Load, filter, and join tables across the three pillars using
 beFAIR’s wrapper functions</td>
-</tr></tbody>
+</tr>
+</tbody>
 </table>
 </div>
 <div class="section level3">
@@ -328,7 +336,6 @@ the analysis ETL scripts</td>
 </tr>
 </tbody>
 </table>
-<!-- Also describe how to add a specific script such as participant_basemalvac with the draftScript function. -->
 </div>
 <div class="section level3">
 <h3 id="codebook-reference">Codebook reference<a class="anchor" aria-label="anchor" href="#codebook-reference"></a>

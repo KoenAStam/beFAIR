@@ -22,7 +22,7 @@ codebook (a YAML file specifying variable names, types, and validation
 rules). Scripts are drafted automatically, leaving you to fill in only
 the study-specific data mapping logic.
 
-![beFAIR infographic](images/infographic.svg)
+![beFAIR infographic](images/infographic2.png)
 
 ### The three data pillars
 
@@ -105,18 +105,22 @@ Depending on your role, beFAIR will mean something different to you.
 ### I want to use data from the database
 
 The database is already populated and you want to query or retrieve
-data. Connect to the database using
+data. Connect using
 [`FAIRgroundConnect()`](https://koenastam.github.io/beFAIR/reference/FAIRgroundConnect.md)
-with your institutional DSN, then use standard `DBI` calls to read
-tables.
+with your DSN, then use standard `DBI` calls to read tables.
 
 ``` r
 
-FAIRgroundConnect("LUCID_FAIRPOINT")
+FAIRgroundConnect("MY_DSN")
 con <- FAIRgroundConnection()
 
 DBI::dbReadTable(con, "participant")
 ```
+
+> A **DSN** (Data Source Name) is an ODBC connection string configured
+> by your database administrator. For local testing without a server,
+> see the [Database smoke
+> test](https://koenastam.github.io/beFAIR/articles/database_smoke_test.md).
 
 To pull all tables related to a specific study, experiment, or analysis
 ID — following relationships across all three pillars — use
@@ -124,15 +128,12 @@ ID — following relationships across all three pillars — use
 
 ``` r
 
-collectTablesById(con, id = "CHSI1")   # returns a named list of all linked tables
+collectTablesById(id = "CHSI1")   # returns a named list of all linked tables
 ```
 
 See the [Database smoke
 test](https://koenastam.github.io/beFAIR/articles/database_smoke_test.md)
-for a worked example of connecting and inspecting the available tables,
-and [Exploring and joining data
-tables](https://koenastam.github.io/beFAIR/articles/exploring_and_joining_data_tables.md)
-for a guide to the available wrapper functions.
+for a worked example of connecting and querying the database.
 
 ### I want to add data by writing ETL scripts
 
@@ -141,7 +142,7 @@ for a new study, experiment, or analysis.
 
 ``` r
 
-FAIRgroundConnect("LUCID_FAIRPOINT")
+FAIRgroundConnect("MY_DSN")
 
 addStudy("MyStudy", study_id = "MYST1")       # scaffolds scripts under studies/
 addExperiment("MyStudy_CyTOF_exvivo",
@@ -161,28 +162,33 @@ for step-by-step walkthroughs.
 ### I am a developer or database maintainer
 
 You are responsible for keeping the database up to date — running ETL
-scripts, managing codebook versions, and onboarding new contributors. If
-you are setting up beFAIR for the first time, start with [Starting a
-project](https://koenastam.github.io/beFAIR/articles/starting_a_project.md).
+scripts, managing codebook versions, and onboarding new contributors.
+
+**Day-to-day:** re-run any new or changed scripts and reload the
+database:
 
 ``` r
 
-FAIRgroundConnect("LUCID_FAIRPOINT")
-
-# Re-run all new or changed scripts and reload the database:
+FAIRgroundConnect("MY_DSN")
 databaseUpdate()
+```
 
-# First-time setup of a new database:
+**First-time setup:** create the project directory and initialize the
+database:
+
+``` r
+
 startProject(dir = "/path/to/my/project")
+FAIRgroundConnect("MY_DSN")
 databaseInitialize()
 ```
 
 [`databaseUpdate()`](https://koenastam.github.io/beFAIR/reference/databaseUpdate.md)
 is the main orchestrator — it syncs codebook definitions, detects new or
 changed scripts, runs each one, validates the output, and loads it into
-the database. See the [Database smoke
-test](https://koenastam.github.io/beFAIR/articles/database_smoke_test.md)
-for setup and maintenance guides, and [Developer
+the database. Start with [Starting a
+project](https://koenastam.github.io/beFAIR/articles/starting_a_project.md)
+for the full setup walkthrough, and [Developer
 internals](https://koenastam.github.io/beFAIR/articles/developer_internals.md)
 for a deep dive into
 [`databaseUpdate()`](https://koenastam.github.io/beFAIR/reference/databaseUpdate.md)
@@ -197,14 +203,15 @@ and the registry tables.
 | Guide | What you will learn |
 |----|----|
 | [Starting a project](https://koenastam.github.io/beFAIR/articles/starting_a_project.md) | Initialize the project directory, connect to a database, and run [`databaseInitialize()`](https://koenastam.github.io/beFAIR/reference/databaseInitialize.md) |
-| [Database smoke test](https://koenastam.github.io/beFAIR/articles/database_smoke_test.md) | Connect via DSN or SQLite, initialize, and verify the registry tables |
+| [Database smoke test](https://koenastam.github.io/beFAIR/articles/database_smoke_test.md) | Run the full ETL pipeline end-to-end in under a minute using an in-memory SQLite database and built-in dummy data |
 | [Developer internals](https://koenastam.github.io/beFAIR/articles/developer_internals.md) | Understand the `table_codebook` and `table_script` registry tables and every function called by [`databaseUpdate()`](https://koenastam.github.io/beFAIR/reference/databaseUpdate.md) |
 
 ### Using data
 
 | Guide | What you will learn |
 |----|----|
-| [Exploring and joining data tables](https://koenastam.github.io/beFAIR/articles/exploring_and_joining_data_tables.md) | Load, filter, and join tables across the three pillars using beFAIR’s wrapper functions |
+| [Database smoke test](https://koenastam.github.io/beFAIR/articles/database_smoke_test.md) | Connect, run the ETL pipeline, and query a working database |
+| Exploring and joining data tables *(coming soon)* | Load, filter, and join tables across the three pillars using beFAIR’s wrapper functions |
 
 ### Populating data
 
