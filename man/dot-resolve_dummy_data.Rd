@@ -20,3 +20,4 @@ in \code{marker}. If found, returns \code{p} relative to that folder's parent
 (equivalent to the old \code{here::here("..", p)}). Otherwise falls back to
 the dummy data shipped with beFAIR.
 }
+\keyword{internal}

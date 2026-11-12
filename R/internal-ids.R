@@ -12,8 +12,6 @@
 #'
 #' @seealso [.setExperimentId()], [addAnalysis()]
 #'
-#' @examples
-#' .setAnalysisId()
 #' @keywords internal
 .setAnalysisId <- function() {
   # get all existing analyses
@@ -46,8 +44,6 @@
 #'
 #' @seealso [.setAnalysisId()], [addExperiment()]
 #'
-#' @examples
-#' .setExperimentId()
 #' @keywords internal
 .setExperimentId <- function() {
   # get all existing experiments

@@ -562,6 +562,7 @@
 #' @param p Relative data path, e.g. `"data/CoHSI1/cytof barcodes"`.
 #' @param marker Path suffix identifying the project root.
 #' @return A file path (character scalar).
+#' @keywords internal
 .resolve_dummy_data <- function(p, marker = "TESTground/project") {
   d <- normalizePath(getwd(), winslash = "/", mustWork = FALSE)
   while (!endsWith(d, marker) && dirname(d) != d) d <- dirname(d)

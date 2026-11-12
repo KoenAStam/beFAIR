@@ -18,9 +18,6 @@ comparing against all existing experiment IDs read from the project's
 \code{meta.yaml} files via \code{\link[=FAIRgroundOverview]{FAIRgroundOverview()}}; a new ID is resampled if a
 collision is detected.
 }
-\examples{
-.setExperimentId()
-}
 \seealso{
 \code{\link[=.setAnalysisId]{.setAnalysisId()}}, \code{\link[=addExperiment]{addExperiment()}}
 }
