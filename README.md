@@ -1,4 +1,4 @@
-# beFAIR <img src="man/figures/logo.png" align="right" height="138" />
+# beFAIR <a href="https://koenastam.github.io/beFAIR/"><img src="man/figures/logo.svg" align="right" height="139" alt="beFAIR website" /></a>
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23018363.svg)](https://doi.org/10.5281/zenodo.23018363)
 
 

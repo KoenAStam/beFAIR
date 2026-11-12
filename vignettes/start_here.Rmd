@@ -38,7 +38,7 @@ Scripts are drafted automatically, leaving you to fill in only the
 study-specific data mapping logic.
 
 
-<img src="images/infographic.svg" style="width: 100%;" alt="beFAIR infographic"/>
+<img src="images/infographic2.png" style="width: 100%;" alt="beFAIR infographic"/>
 
 ### The three data pillars
 
@@ -124,37 +124,37 @@ Depending on your role, beFAIR will mean something different to you.
 ### I want to use data from the database
 
 The database is already populated and you want to query or retrieve data.
-Connect to the database using `FAIRgroundConnect()` with your institutional DSN,
-then use standard `DBI` calls to read tables.
+Connect using `FAIRgroundConnect()` with your DSN, then use standard `DBI`
+calls to read tables.
 
 ```r
-FAIRgroundConnect("LUCID_FAIRPOINT")
+FAIRgroundConnect("MY_DSN")
 con <- FAIRgroundConnection()
 
 DBI::dbReadTable(con, "participant")
 ```
 
+> A **DSN** (Data Source Name) is an ODBC connection string configured by your
+> database administrator. For local testing without a server, see the
+> [Database smoke test](database_smoke_test.html).
+
 To pull all tables related to a specific study, experiment, or analysis ID —
 following relationships across all three pillars — use `collectTablesById()`:
 
 ```r
-collectTablesById(con, id = "CHSI1")   # returns a named list of all linked tables
+collectTablesById(id = "CHSI1")   # returns a named list of all linked tables
 ```
 
 See the [Database smoke test](database_smoke_test.html) for a worked example of
-connecting and inspecting the available tables, and
-[Exploring and joining data tables](exploring_and_joining_data_tables.html) for
-a guide to the available wrapper functions.
+connecting and querying the database.
 
 ### I want to add data by writing ETL scripts
 
 A FAIRground directory already exists and you need to contribute data
 for a new study, experiment, or analysis.
 
-<!-- Also describe how to add a specific script such as participant_basemalvac with the draftScript function. -->
-
 ```r
-FAIRgroundConnect("LUCID_FAIRPOINT")
+FAIRgroundConnect("MY_DSN")
 
 addStudy("MyStudy", study_id = "MYST1")       # scaffolds scripts under studies/
 addExperiment("MyStudy_CyTOF_exvivo",
@@ -170,28 +170,28 @@ the data-mapping logic. See [Adding a study](adding_a_study.html),
 ### I am a developer or database maintainer
 
 You are responsible for keeping the database up to date — running ETL scripts,
-managing codebook versions, and onboarding new contributors. If you are setting
-up beFAIR for the first time, start with [Starting a project](starting_a_project.html).
+managing codebook versions, and onboarding new contributors.
 
-<!-- Make a clear distinction between starting a project and maintaining an existing project. In two different code blocks.  -->
+**Day-to-day:** re-run any new or changed scripts and reload the database:
 
 ```r
-FAIRgroundConnect("LUCID_FAIRPOINT")
-
-# Re-run all new or changed scripts and reload the database:
+FAIRgroundConnect("MY_DSN")
 databaseUpdate()
+```
 
-# First-time setup of a new database:
+**First-time setup:** create the project directory and initialize the database:
+
+```r
 startProject(dir = "/path/to/my/project")
+FAIRgroundConnect("MY_DSN")
 databaseInitialize()
 ```
 
 `databaseUpdate()` is the main orchestrator — it syncs codebook definitions,
 detects new or changed scripts, runs each one, validates the output, and loads
-it into the database. See the
-[Database smoke test](database_smoke_test.html) for setup and maintenance
-guides, and [Developer internals](developer_internals.html) for a deep dive
-into `databaseUpdate()` and the registry tables.
+it into the database. Start with [Starting a project](starting_a_project.html)
+for the full setup walkthrough, and [Developer internals](developer_internals.html)
+for a deep dive into `databaseUpdate()` and the registry tables.
 
 ---
 
@@ -202,14 +202,15 @@ into `databaseUpdate()` and the registry tables.
 | Guide | What you will learn |
 |---|---|
 | [Starting a project](starting_a_project.html) | Initialize the project directory, connect to a database, and run `databaseInitialize()` |
-| [Database smoke test](database_smoke_test.html) | Connect via DSN or SQLite, initialize, and verify the registry tables |
+| [Database smoke test](database_smoke_test.html) | Run the full ETL pipeline end-to-end in under a minute using an in-memory SQLite database and built-in dummy data |
 | [Developer internals](developer_internals.html) | Understand the `table_codebook` and `table_script` registry tables and every function called by `databaseUpdate()` |
 
 ### Using data
 
 | Guide | What you will learn |
 |---|---|
-| [Exploring and joining data tables](exploring_and_joining_data_tables.html) | Load, filter, and join tables across the three pillars using beFAIR's wrapper functions |
+| [Database smoke test](database_smoke_test.html) | Connect, run the ETL pipeline, and query a working database |
+| Exploring and joining data tables *(coming soon)* | Load, filter, and join tables across the three pillars using beFAIR's wrapper functions |
 
 ### Populating data
 
@@ -218,8 +219,6 @@ into `databaseUpdate()` and the registry tables.
 | [Adding a study](adding_a_study.html) | Register a study with `addStudy()`, complete `meta.yaml`, and fill in the four study ETL scripts (`id_mapping`, `participant`, `studyarm`, `studydesign`) |
 | [Adding an experiment](adding_an_experiment.html) | Register an experiment with `addExperiment()` and complete the experiment-specific ETL scripts |
 | [Adding an analysis](adding_an_analysis.html) | Register an analysis with `addAnalysis()` and complete the analysis ETL scripts |
-
-<!-- Also describe how to add a specific script such as participant_basemalvac with the draftScript function. -->
 
 ### Codebook reference
 | Guide | What you will learn |

@@ -90,7 +90,7 @@ validation rules. Scripts that load data are drafted automatically from the
 codebook and are tracked in a registry. The result is a single, queryable SQL
 database in which all studies, experiments, and analyses speak the same language.
 
-<img src="images/infographic.svg" style="width: 100%;" alt="FAIRground infographic"/>
+<img src="images/infographic2.png" style="width: 100%;" alt="FAIRground infographic"/>
 
 ---
 
