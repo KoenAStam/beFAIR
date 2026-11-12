@@ -1,0 +1,19 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  adding_a_study: adding_a_study.html
+  adding_an_analysis: adding_an_analysis.html
+  adding_an_experiment: adding_an_experiment.html
+  codebook_configuration: codebook_configuration.html
+  codebooks_reference: codebooks_reference.html
+  database_smoke_test: database_smoke_test.html
+  developer_internals: developer_internals.html
+  exploring_and_joining_data_tables: exploring_and_joining_data_tables.html
+  overview: overview.html
+  start_here: start_here.html
+  starting_a_project: starting_a_project.html
+last_built: 2026-11-12T11:56Z
+urls:
+  reference: https://koenastam.github.io/beFAIR/reference
+  article: https://koenastam.github.io/beFAIR/articles

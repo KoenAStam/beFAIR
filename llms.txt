@@ -1,0 +1,278 @@
+# beFAIR
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23018363.svg)](https://doi.org/10.5281/zenodo.23018363)
+
+beFAIR is an R package for managing and harmonizing clinical research
+data following FAIR principles. It provides a codebook-driven ETL
+framework that links clinical studies, immunological experiments, and
+downstream analyses through a shared SQL database.
+
+![FAIRground overview](reference/figures/infographic2.png)
+
+## Features
+
+- **Structured project layout** — scaffold studies, experiments, and
+  analyses with a single function call
+- **Codebook-driven schemas** — define data tables in YAML; beFAIR
+  creates and maintains SQL tables automatically
+- **Reproducible ETL scripts** — draft, run, and version-track R scripts
+  that extract, transform, and validate your data
+- **Stable participant IDs** — pseudo-anonymize participants across
+  studies using SHA-256 derived identifiers
+- **Built-in validation** — validate datasets against codebook rules
+  before loading, powered by `pointblank`
+- **Multi-study harmonization** — link participants and events across
+  studies and experiments through a shared schema
+
+## Installation
+
+``` r
+
+# Install from GitHub
+pak::pak("KoenAStam/beFAIR")
+
+# Or using remotes
+remotes::install_github("KoenAStam/beFAIR")
+```
+
+## Getting started
+
+See the [getting started
+guide](https://koenastam.github.io/beFAIR/articles/start_here.html) for
+an introduction, or jump to a specific topic:
+
+- [Starting a
+  project](https://koenastam.github.io/beFAIR/articles/starting_a_project.html)
+- [Adding a
+  study](https://koenastam.github.io/beFAIR/articles/adding_a_study.html)
+- [Adding an
+  experiment](https://koenastam.github.io/beFAIR/articles/adding_an_experiment.html)
+- [Codebook
+  reference](https://koenastam.github.io/beFAIR/articles/codebooks_reference.html)
+
+## Funding
+
+Funded by the European Union under the HORIZON EUROPE project
+WORMVACS2.0 (Grant Agreement n° 101080784). Views and opinions expressed
+are however those of the author(s) only and do not necessarily reflect
+those of the European Union or European Health and Digital Executive
+Agency (HADEA). Neither the European Union nor the granting authority
+(HADEA) can be held responsible for them.
+
+# Package index
+
+## Database
+
+Connect to and manage the FAIRground database.
+
+- [`FAIRgroundConnect()`](https://koenastam.github.io/beFAIR/reference/FAIRgroundConnect.md)
+  : Connect to a FAIRground database
+
+- [`FAIRgroundConnection()`](https://koenastam.github.io/beFAIR/reference/FAIRgroundConnection.md)
+  : Get the active FAIRground database connection
+
+- [`FAIRgroundDisconnect()`](https://koenastam.github.io/beFAIR/reference/FAIRgroundDisconnect.md)
+  : Disconnect the default FAIRground database connection
+
+- [`databaseInitialize()`](https://koenastam.github.io/beFAIR/reference/databaseInitialize.md)
+  : Initialize FAIRground database
+
+- [`databaseUpdate()`](https://koenastam.github.io/beFAIR/reference/databaseUpdate.md)
+  : Update the FAIRground database
+
+- [`databasePrepareProjects()`](https://koenastam.github.io/beFAIR/reference/databasePrepareProjects.md)
+  : Prepare the pillar project registry
+
+- [`databasePrepareDatasources()`](https://koenastam.github.io/beFAIR/reference/databasePrepareDatasources.md)
+  : Prepare data source registry
+
+- [`databasePrepareDependencies()`](https://koenastam.github.io/beFAIR/reference/databasePrepareDependencies.md)
+  : Prepare dependency registry for an ETL script
+
+- [`databasePrepareCodebooks()`](https://koenastam.github.io/beFAIR/reference/databasePrepareCodebooks.md)
+  : Prepare and synchronize beFAIR codebooks with the database
+
+- [`databasePrepareScripts()`](https://koenastam.github.io/beFAIR/reference/databasePrepareScripts.md)
+  : Prepare ETL scripts prior to updating the database
+
+- [`databasePrepareData()`](https://koenastam.github.io/beFAIR/reference/databasePrepareData.md)
+  :
+
+  Prepare data from a `databook` for uploading to database
+
+- [`databaseExport()`](https://koenastam.github.io/beFAIR/reference/databaseExport.md)
+  : Export all database tables to R
+
+- [`databaseUpdateOverview()`](https://koenastam.github.io/beFAIR/reference/databaseUpdateOverview.md)
+  : Update the overview tables in the database
+
+- [`databaseUpdatePublications()`](https://koenastam.github.io/beFAIR/reference/databaseUpdatePublications.md)
+  : Update the publications table in the database
+
+- [`getDatabase()`](https://koenastam.github.io/beFAIR/reference/getDatabase.md)
+  : Load database tables into R (cache-first)
+
+- [`initTable()`](https://koenastam.github.io/beFAIR/reference/initTable.md)
+  : Create or recreate a single database table from its codebook
+
+- [`sourceScript()`](https://koenastam.github.io/beFAIR/reference/sourceScript.md)
+  : Source an ETL script and return its databook
+
+## Codebooks
+
+Read, inspect, and validate codebook schemas.
+
+- [`codebookToEntries()`](https://koenastam.github.io/beFAIR/reference/codebookToEntries.md)
+  : Create an empty databook from a codebook
+- [`codebookToDraft()`](https://koenastam.github.io/beFAIR/reference/codebookToDraft.md)
+  : Generate R code for initializing codebook entries
+- [`codebookToSummary()`](https://koenastam.github.io/beFAIR/reference/codebookToSummary.md)
+  : Summarise a codebook or one of its variables
+- [`codebookToTable()`](https://koenastam.github.io/beFAIR/reference/codebookToTable.md)
+  : Compile all codebooks into a data frame
+- [`codebookRead()`](https://koenastam.github.io/beFAIR/reference/codebookRead.md)
+  : Read a codebook by name
+- [`getCodebookDescription()`](https://koenastam.github.io/beFAIR/reference/getCodebookDescription.md)
+  : Get the description of a codebook
+- [`viewCodebookMap()`](https://koenastam.github.io/beFAIR/reference/viewCodebookMap.md)
+  : View Codebook Relationship Map (ERD Style)
+- [`validateDatabook()`](https://koenastam.github.io/beFAIR/reference/validateDatabook.md)
+  : Validate a databook against its codebook rules
+
+## ETL Scripting
+
+Set up projects and draft ETL scripts.
+
+- [`startProject()`](https://koenastam.github.io/beFAIR/reference/startProject.md)
+  : Create a FAIRground folder
+- [`addStudy()`](https://koenastam.github.io/beFAIR/reference/addStudy.md)
+  : Add a study to the FAIRground
+- [`addExperiment()`](https://koenastam.github.io/beFAIR/reference/addExperiment.md)
+  : Add an experiment to the FAIRground
+- [`addAnalysis()`](https://koenastam.github.io/beFAIR/reference/addAnalysis.md)
+  : Add an analysis to the FAIRground
+- [`draftScript()`](https://koenastam.github.io/beFAIR/reference/draftScript.md)
+  : Draft an ETL script for a study, experiment, or analysis
+
+## Utilities
+
+Helper functions for data retrieval, participant IDs, and harmonization.
+
+- [`collectTable()`](https://koenastam.github.io/beFAIR/reference/collectTable.md)
+  : Collect data table from database, optionally filtered by script_id
+
+- [`collectTablesById()`](https://koenastam.github.io/beFAIR/reference/collectTablesById.md)
+  : Collect all database tables linked to a study, experiment, or
+  analysis ID
+
+- [`entriesInDatabase()`](https://koenastam.github.io/beFAIR/reference/entriesInDatabase.md)
+  : Check whether at least one row for a script_id exists in a data
+  table
+
+- [`getProjectInfo()`](https://koenastam.github.io/beFAIR/reference/getProjectInfo.md)
+  : Retrieve all registry information for a project
+
+- [`filterTableList()`](https://koenastam.github.io/beFAIR/reference/filterTableList.md)
+  : Filter a table list by study IDs
+
+- [`validateSourceId()`](https://koenastam.github.io/beFAIR/reference/validateSourceId.md)
+  : Check whether source IDs exist in the ID mapping table
+
+- [`FAIRgroundOverview()`](https://koenastam.github.io/beFAIR/reference/FAIRgroundOverview.md)
+  [`overviewFAIRground()`](https://koenastam.github.io/beFAIR/reference/FAIRgroundOverview.md)
+  : Generate an overview of beFAIR meta.yaml files
+
+- [`plotDependencies()`](https://koenastam.github.io/beFAIR/reference/plotDependencies.md)
+  : Plot the dependency graph for a table produced by an analysis
+
+- [`getRelativeTimepoint()`](https://koenastam.github.io/beFAIR/reference/getRelativeTimepoint.md)
+  : Convert timepoint descriptions to relative timepoints in days
+
+- [`validateCytofExperiment()`](https://koenastam.github.io/beFAIR/reference/validateCytofExperiment.md)
+  : Validate a CyTOF experiment
+
+- [`tableSummary()`](https://koenastam.github.io/beFAIR/reference/tableSummary.md)
+  :
+
+  Summarise all variables in a codebook as a `gt` table
+
+- [`tableVariableByStudy()`](https://koenastam.github.io/beFAIR/reference/tableVariableByStudy.md)
+  :
+
+  Summarise a codebook variable by study as a `gt` table
+
+- [`harmonizeDate()`](https://koenastam.github.io/beFAIR/reference/harmonizeDate.md)
+  : Convert a date string to ISO 8601 format
+
+- [`harmonizeGates()`](https://koenastam.github.io/beFAIR/reference/harmonizeGates.md)
+  :
+
+  Takes a vector of gate strings, splits them into components,
+  harmonizes the marker names, and reconstructs the gate strings with
+  standardized marker names using `harmonizeMarkers`.
+
+- [`harmonizeMarkers()`](https://koenastam.github.io/beFAIR/reference/harmonizeMarkers.md)
+  : Harmonize cellular marker labels
+
+- [`searchId()`](https://koenastam.github.io/beFAIR/reference/searchId.md)
+  : Search for studies, experiments, or analyses by ID or name
+
+## Data
+
+External datasets used in the package
+
+- [`HGNC`](https://koenastam.github.io/beFAIR/reference/HGNC.md) : HUGO
+  Gene Nomenclature Committee (HGNC) data
+- [`LUNC`](https://koenastam.github.io/beFAIR/reference/LUNC.md) : LUCID
+  Nomenclature (LUNC) data
+
+# Articles
+
+### Overview
+
+Introduction to beFAIR and its three data pillars.
+
+- [Start here: Harmonizing data with
+  beFAIR](https://koenastam.github.io/beFAIR/articles/start_here.md):
+- [beFAIR: A Framework for FAIR Clinical Research
+  Data](https://koenastam.github.io/beFAIR/articles/overview.md):
+
+### Exploring the database
+
+For users who want to connect and query an existing FAIRground database.
+
+- [Database: Smoke
+  test](https://koenastam.github.io/beFAIR/articles/database_smoke_test.md):
+- [Exploring and joining data
+  tables](https://koenastam.github.io/beFAIR/articles/exploring_and_joining_data_tables.md):
+
+### Adding data and writing ETL scripts
+
+For users who contribute data by writing ETL scripts for studies,
+experiments, or analyses.
+
+- [Adding a
+  study](https://koenastam.github.io/beFAIR/articles/adding_a_study.md):
+- [Adding an
+  experiment](https://koenastam.github.io/beFAIR/articles/adding_an_experiment.md):
+- [Adding an
+  analysis](https://koenastam.github.io/beFAIR/articles/adding_an_analysis.md):
+
+### Database maintenance
+
+For developers and database maintainers who set up and maintain the
+FAIRground.
+
+- [Starting a
+  project](https://koenastam.github.io/beFAIR/articles/starting_a_project.md):
+- [Developer internals: databaseUpdate() and the registry
+  tables](https://koenastam.github.io/beFAIR/articles/developer_internals.md):
+
+### Codebooks
+
+Reference documentation for the codebook schema system.
+
+- [Codebook configuration
+  guide](https://koenastam.github.io/beFAIR/articles/codebook_configuration.md):
+- [Codebook
+  reference](https://koenastam.github.io/beFAIR/articles/codebooks_reference.md):
