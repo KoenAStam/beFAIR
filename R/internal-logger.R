@@ -56,5 +56,5 @@
 .logWarning <- function(msg, ...) {
   lg <- lgr::get_logger("beFAIR")
   lg$warn(msg, ...)
-  signalCondition(simpleWarning(msg))
+  warning(msg, call. = FALSE)
 }

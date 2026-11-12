@@ -73,7 +73,7 @@ No study data yet — that happens in the next step.
 
 ## 4. Run the ETL pipeline
 
-```{r update, message=FALSE, warning=FALSE}
+```{r update, message=FALSE}
 databaseUpdate()
 ```
 
