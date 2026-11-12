@@ -15,14 +15,24 @@ beFAIR is an R package for managing and harmonizing clinical research data follo
 - **Built-in validation** — validate datasets against codebook rules before loading, powered by `pointblank`
 - **Multi-study harmonization** — link participants and events across studies and experiments through a shared schema
 
+## Installation
+
+```r
+# Install from GitHub
+pak::pak("KoenAStam/beFAIR")
+
+# Or using remotes
+remotes::install_github("KoenAStam/beFAIR")
+```
+
 ## Getting started
 
-See the [getting started guide](articles/start_here.html) for an introduction, or jump to a specific topic:
+See the [getting started guide](https://koenastam.github.io/beFAIR/articles/start_here.html) for an introduction, or jump to a specific topic:
 
-- [Starting a project](articles/starting_a_project.html)
-- [Adding a study](articles/adding_a_study.html)
-- [Adding an experiment](articles/adding_an_experiment.html)
-- [Codebook reference](articles/codebooks_reference.html)
+- [Starting a project](https://koenastam.github.io/beFAIR/articles/starting_a_project.html)
+- [Adding a study](https://koenastam.github.io/beFAIR/articles/adding_a_study.html)
+- [Adding an experiment](https://koenastam.github.io/beFAIR/articles/adding_an_experiment.html)
+- [Codebook reference](https://koenastam.github.io/beFAIR/articles/codebooks_reference.html)
 
 ## Funding
 

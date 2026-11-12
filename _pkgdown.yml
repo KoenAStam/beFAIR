@@ -1,4 +1,4 @@
-url: https://data.hypovax.org/beFAIR/
+url: https://koenastam.github.io/beFAIR/
 
 exclude:
  - CLAUDE.md
@@ -20,7 +20,7 @@ navbar:
   components:
     source:
       text: Source
-      href: "https://git.lumc.nl/fdeweijer/supervaxr.git"
+      href: "https://github.com/KoenAStam/beFAIR"
 
 reference:
   - title: "Database"

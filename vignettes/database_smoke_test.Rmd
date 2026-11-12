@@ -3,71 +3,117 @@ title: "Database: Smoke test"
 author: "K.A. Stam"
 date: "`r Sys.Date()`"
 output:
-  rmarkdown::html_vignette: default
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{Database: Smoke test} 
+  %\VignetteIndexEntry{Database: Smoke test}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}\n"
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
 library(beFAIR)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE, comment = "#>")
+
+# All chunks run from inside the FAIRground directory
+dir <- file.path(tempdir(), "beFAIR_smoke")
+dir.create(dir, showWarnings = FALSE)
+knitr::opts_knit$set(root.dir = dir)
 ```
 
-<center>
-## 🚧 _Under construction_ 🚧
-</center>
+This vignette walks through the fastest path to a working local database: connect,
+create a project, initialise, run the ETL, and check that data arrived. It takes
+about one minute to run on a fresh installation.
 
+The examples below use an **in-memory SQLite database** and a **built-in dummy
+FAIRground**, so no external server or DSN configuration is needed.
 
-## Setting up a database
+---
 
-After creating a FAIRground 
-([Starting a project](starting_a_project.html)), the next step is to set up a
-telational database. The `beFAIR` package is designed around interaction
-with a SQL database. All database operations are implemented via the `DBI` 
-interface, which allows beFAIR to work with different backends 
-(e.g., SQLite, PostgreSQL, MariaDB).
+## 1. Connect to the database
 
-How and where you host your database depends on your institutional 
-infrastructure. If you do not yet have a database configured, you can still 
-follow this vignette to understand how beFAIR manages database interactions.
-
-## Connection
-
-The most straightforward way to connect to a database is via a DSN 
-(Data Source Name) connection. On Windows, DSNs can be configured using the 
-__ODBC Data Sources__ administrator.
-
-Once configured, you can connect using `FAIRgroundConnect()`. This establishes a 
-default connection that will be used throughout your session.
-
-```{r, eval = FALSE}
-## How you normally would connect to the database 
-FAIRgroundConnect("LUCID_beFAIR")
-con <- FAIRgroundConnection() # If you want to retrieve the active connection
-```
-
-The active connection is stored internally and reused by beFAIR functions 
-unless explicitly overridden.
-
-To ensure reproducibility, this vignette uses an in-memory SQLite database via 
-`RSQLite`. We also initialize a dummy FAIRground containing example data 
-and ETL scripts.
-
-```{r}
+```{r connect}
 con <- FAIRgroundConnect(drv = RSQLite::SQLite(), dsn = ":memory:")
-
-dir <- file.path(tempdir(), "/beFAIR")
-startProject(dir = dir, dummy=TRUE)
-
-## Location of your dummy beFAIR
-# cat(normalizePath(dir))
 ```
 
+`FAIRgroundConnect()` stores the connection as the session default. Every
+subsequent beFAIR function will use it automatically unless you pass a
+different connection explicitly.
 
-```{r}
+> **In production** you would use a DSN instead:
+> `FAIRgroundConnect("MY_DSN")`. See `?FAIRgroundConnect` for ODBC options.
+
+---
+
+## 2. Create a FAIRground project
+
+```{r start-project, message=FALSE}
+startProject(dir = dir, dummy = TRUE)
+list.files(dir)
+```
+
+`dummy = TRUE` copies a set of example studies, experiments, and analyses into
+the new project directory. These include two clinical studies and several
+immunology experiments — enough to demonstrate the full pipeline.
+
+---
+
+## 3. Initialise the database
+
+```{r init}
 databaseInitialize()
-DBI::dbReadTable(con, "table_script")
+DBI::dbListTables(con)
 ```
 
+`databaseInitialize()` creates the two core registry tables (`table_script` and
+`table_codebook`) plus reference tables for gene symbols and glycan nomenclature.
+No study data yet — that happens in the next step.
+
+---
+
+## 4. Run the ETL pipeline
+
+```{r update, message=FALSE}
+databaseUpdate()
+```
+
+`databaseUpdate()` scans the project directory for ETL scripts, runs each one,
+validates the output against its codebook, and loads the results into the
+database. It is the single function you call whenever scripts or data change.
+
+---
+
+## 5. Verify data loaded
+
+Check which tables now exist:
+
+```{r list-tables}
+DBI::dbListTables(con)
+```
+
+Pull the participant table to confirm real rows arrived:
+
+```{r participants}
+participants <- collectTable("participant")
+nrow(participants)
+head(participants[, c("participant_id", "study_id", "age", "sex")])
+```
+
+You can explore any other table the same way:
+
+```{r studyarms}
+collectTable("studyarm")[, c("studyarm_id", "study_id", "studyarm_name")]
+```
+
+---
+
+## What's next
+
+The smoke test confirms the pipeline works end-to-end. From here:
+
+| Guide | What you will learn |
+|---|---|
+| [Starting a project](starting_a_project.html) | Set up a FAIRground for your own data and register your first study |
+| [Adding a study](adding_a_study.html) | Write and fill in the four study ETL scripts |
+| [Adding an experiment](adding_an_experiment.html) | Register an experiment and complete the experiment ETL scripts |
+| [Developer internals](developer_internals.html) | Understand what `databaseUpdate()` does under the hood |

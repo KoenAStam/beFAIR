@@ -22,7 +22,7 @@ Description:
     reproducible data ingestion and promotes FAIR (Findable,
     Accessible, Interoperable, Reusable) data practices.
 License: Apache License (>= 2)
-URL: https://data.hypovax.org/beFAIR
+URL: https://koenastam.github.io/beFAIR/, https://github.com/KoenAStam/beFAIR
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -52,5 +52,7 @@ Suggests:
     rmarkdown,
     RSQLite
 VignetteBuilder: knitr
+Config/Needs/website: pkgdown
+Config/Needs/check: rcmdcheck
 Config/roxygen2/version: 8.0.0
 RoxygenNote: 7.3.3
