@@ -1,5 +1,13 @@
 # Changelog
 
+## beFAIR 0.3.0
+
+### Documentation
+
+- Updated and expanded vignettes.
+- Fixed pkgdown configuration so the online documentation site builds
+  and renders correctly.
+
 ## beFAIR 0.2.3
 
 ### Bug fixes
