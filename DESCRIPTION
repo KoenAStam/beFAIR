@@ -6,11 +6,13 @@ Authors@R:
     c(person(given = "Koen",
              family = "Stam",
              role = c("cre", "aut"),
-             email = "k.a.stam@lumc.nl"),
+             email = "k.a.stam@lumc.nl",
+             comment = c(ORCID = "0000-0003-0982-4439")),
       person(given = "Floor",
              family = "de Weijer",
              role = c("aut"),
-             email = "f.de_weijer@lumc.nl")
+             email = "f.de_weijer@lumc.nl",
+             comment = c(ORCID = "0009-0009-9721-362X"))
        )
 Description:
     beFAIR provides an ETL (Extract-Transform-Load) framework for

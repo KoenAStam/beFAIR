@@ -1,0 +1,63 @@
+{
+  "title": "beFAIR: Codebook-Driven ETL Framework for Clinical Research Data",
+  "upload_type": "software",
+  "description": "beFAIR is an R package that provides an ETL (Extract-Transform-Load) framework for clinical research platforms. It creates and manages structured 'FAIRground' project directories, enforces codebook-driven data schemas in a SQL database, and automates the drafting, running, and tracking of ETL scripts. Designed to harmonize data across clinical studies using standardized codebooks, beFAIR supports reproducible data ingestion and promotes FAIR (Findable, Accessible, Interoperable, Reusable) data practices.",
+  "creators": [
+    {
+      "name": "Stam, Koen",
+      "affiliation": "Leiden University Medical Center",
+      "orcid": "0000-0003-0982-4439"
+    },
+    {
+      "name": "de Weijer, Floor",
+      "affiliation": "Leiden University Medical Center",
+      "orcid": "0009-0009-9721-362X"
+    }
+  ],
+  "license": "Apache-2.0",
+  "access_right": "open",
+  "keywords": [
+    "R package",
+    "ETL",
+    "FAIR data",
+    "data harmonization",
+    "codebook",
+    "clinical research data",
+    "research data management"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/KoenAStam/beFAIR",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "identifier": "https://data.hypovax.org",
+      "relation": "isReferencedBy",
+      "resource_type": "other"
+    },
+    {
+      "identifier": "https://cordis.europa.eu/project/id/101080784",
+      "relation": "isPartOf",
+      "resource_type": "other"
+    },
+    {
+      "identifier": "https://reporter.nih.gov/project-details/11044113",
+      "relation": "isPartOf",
+      "resource_type": "other"
+    },
+    {
+      "identifier": "https://www.gatesfoundation.org/about/committed-grants/2023/09/inv-043608",
+      "relation": "isPartOf",
+      "resource_type": "other"
+    }
+  ],
+  "grants": [
+    {
+      "id": "10.13039/501100000780::101080784"
+    },
+    {
+      "id": "10.13039/100000002::5U01AI165745-04"
+    }
+  ]
+}

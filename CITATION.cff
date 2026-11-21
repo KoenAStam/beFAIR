@@ -11,8 +11,9 @@ authors:
   - given-names: Floor
     family-names: Weijer
     name-particle: de
-    email: f.deweijer@lumc.nl
+    email: f.de_weijer@lumc.nl
     affiliation: Leiden University Medical Center
+    orcid: 'https://orcid.org/0009-0009-9721-362X'
 identifiers:
   - type: url
     value: 'https://data.hypovax.org'
