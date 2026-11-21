@@ -57,9 +57,9 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Developer internals: databaseUpdate() and the registry tables</h1>
                         <h4 data-toc-skip class="author">K.A. Stam</h4>
             
-            <h4 data-toc-skip class="date">2026-11-13</h4>
+            <h4 data-toc-skip class="date">2026-11-21</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/KoenAStam/beFAIR/blob/v0.3.0/vignettes/developer_internals.Rmd" class="external-link"><code>vignettes/developer_internals.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/KoenAStam/beFAIR/blob/main/vignettes/developer_internals.Rmd" class="external-link"><code>vignettes/developer_internals.Rmd</code></a></small>
       <div class="d-none name"><code>developer_internals.Rmd</code></div>
     </div>
 
@@ -337,7 +337,7 @@ fields passed by the caller.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jeroen.r-universe.dev/jsonlite" class="external-link">jsonlite</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">log_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"logs/files"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">logs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/stream_in.html" class="external-link">stream_in</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="va">log_file</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">logs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/stream_in.html" class="external-link">stream_in</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="va">log_file</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>See <a href="#logging">Section 5</a> for more detail on the logger
 setup.</p>
 <hr>
@@ -710,7 +710,7 @@ the end of <code><a href="../reference/databaseUpdate.html">databaseUpdate()</a>
 <span><span class="va">log_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"logs/files"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span>, pattern <span class="op">=</span> <span class="st">"\\.json$"</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Stream-parse the JSON log (one object per line)</span></span>
-<span><span class="va">logs</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://jeroen.r-universe.dev/jsonlite/reference/stream_in.html" class="external-link">stream_in</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="va">log_file</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">logs</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/stream_in.html" class="external-link">stream_in</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/connections.html" class="external-link">file</a></span><span class="op">(</span><span class="va">log_file</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Filter to warnings and errors only</span></span>
 <span><span class="va">logs</span><span class="op">[</span><span class="va">logs</span><span class="op">$</span><span class="va">level</span> <span class="op">&gt;=</span> <span class="fl">300</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"timestamp"</span>, <span class="st">"level_name"</span>, <span class="st">"msg"</span>, <span class="st">"script_id"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>

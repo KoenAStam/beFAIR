@@ -3,13 +3,14 @@
 ## Authors
 
 - **Koen Stam**. Maintainer, author.
+  [](https://orcid.org/0000-0003-0982-4439)
 
-- **Floor de Weijer**. Author.
+- **Floor de Weijer**. Author. [](https://orcid.org/0009-0009-9721-362X)
 
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/KoenAStam/beFAIR/blob/v0.3.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/KoenAStam/beFAIR/blob/main/DESCRIPTION)
 
 Stam K, de Weijer F (2026). *beFAIR: Codebook-Driven ETL Framework for
 Clinical Research Data*. R package version 0.3.0,
